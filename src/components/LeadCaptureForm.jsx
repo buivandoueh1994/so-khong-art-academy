@@ -170,7 +170,12 @@ export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess })
 
                   <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200 text-xs text-amber-900 max-w-md mx-auto mb-6 text-left space-y-1">
                     <p><strong>Khóa học quan tâm:</strong> {formData.course === 'kids' ? 'Lớp Vẽ Trẻ Em (4-15 tuổi)' : 'Mỹ Thuật Người Lớn (16+ tuổi)'}</p>
-                    <p><strong>Cơ sở:</strong> {formData.branch === 'hn-badinh' ? 'CS Ba Đình, Hà Nội' : formData.branch === 'hn-caugiay' ? 'CS Cầu Giấy, Hà Nội' : 'CS Quận 3, TP.HCM'}</p>
+                    <p><strong>Cơ sở:</strong> {
+                      formData.branch === 'hn-badinh' ? 'CS1: Ba Đình, Hà Nội' :
+                      formData.branch === 'hn-caugiay' ? 'CS2: Cầu Giấy, Hà Nội' :
+                      formData.branch === 'hn-tayho' ? 'CS3: Tây Hồ, Hà Nội' :
+                      formData.branch === 'hp-lechan' ? 'CS4: Lê Chân, Hải Phòng' : 'CS5: Ngô Quyền, Hải Phòng'
+                    }</p>
                     <p><strong>Học phí buổi trải nghiệm:</strong> <span className="text-emerald-700 font-bold">0đ (Miễn phí 100%)</span></p>
                   </div>
 
@@ -292,8 +297,8 @@ export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess })
                         <option value="hn-badinh">CS1: Ba Đình - Hà Nội</option>
                         <option value="hn-caugiay">CS2: Cầu Giấy - Hà Nội</option>
                         <option value="hn-tayho">CS3: Tây Hồ - Hà Nội</option>
-                        <option value="hcm-q3">CS4: Quận 3 - TP.HCM</option>
-                        <option value="hcm-binhthanh">CS5: Bình Thạnh - TP.HCM</option>
+                        <option value="hp-lechan">CS4: Lê Chân - Hải Phòng</option>
+                        <option value="hp-ngoquyen">CS5: Ngô Quyền - Hải Phòng</option>
                       </select>
                     </div>
 

@@ -68,10 +68,11 @@ npm run build
 
 ---
 
-## 📍 5. Hệ Thống Cơ Sở
+## 📍 5. Hệ Thống 05 Cơ Sở (Hà Nội & Hải Phòng)
 
-- **CS1 (Hà Nội):** Số 18, Ngõ 92 Kim Mã, Ba Đình, Hà Nội
-- **CS2 (Hà Nội):** Tầng 3, 126 Hoàng Quốc Việt, Cầu Giấy, Hà Nội
-- **CS3 (TP.HCM):** 215/8 Điện Biên Phủ, Phường Võ Thị Sáu, Quận 3, TP.HCM
-- **CS4 (TP.HCM):** 48/2 Lam Sơn, Phường 6, Bình Thạnh, TP.HCM
+- **CS1 (Ba Đình, Hà Nội):** Số 18, Ngõ 92 Kim Mã, Ba Đình, Hà Nội
+- **CS2 (Cầu Giấy, Hà Nội):** Tầng 3, 126 Hoàng Quốc Việt, Cầu Giấy, Hà Nội
+- **CS3 (Tây Hồ, Hà Nội):** Số 45 Tô Ngọc Vân, Quảng An, Tây Hồ, Hà Nội
+- **CS4 (Lê Chân, Hải Phòng):** Số 82 Mê Linh, Phường An Biên, Lê Chân, Hải Phòng
+- **CS5 (Ngô Quyền, Hải Phòng):** Số 15 Lạch Tray, Ngô Quyền, Hải Phòng
 - **Hotline / Zalo:** 0988.123.456

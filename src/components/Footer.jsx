@@ -13,10 +13,10 @@ export const Footer = ({ onOpenTrialModal }) => {
       ]
     },
     {
-      city: 'TP. Hồ Chí Minh (02 Cơ Sở)',
+      city: 'Hải Phòng (02 Cơ Sở)',
       items: [
-        { name: 'Cơ sở 4 (Quận 3)', address: '215/8 Điện Biên Phủ, Phường Võ Thị Sáu, Quận 3, TP.HCM' },
-        { name: 'Cơ sở 5 (Bình Thạnh)', address: '48/2 Lam Sơn, Phường 6, Bình Thạnh, TP.HCM' },
+        { name: 'Cơ sở 4 (Lê Chân)', address: 'Số 82 Mê Linh, Phường An Biên, Lê Chân, Hải Phòng' },
+        { name: 'Cơ sở 5 (Ngô Quyền)', address: 'Số 15 Lạch Tray, Ngô Quyền, Hải Phòng' },
       ]
     }
   ];
@@ -36,7 +36,7 @@ export const Footer = ({ onOpenTrialModal }) => {
                 Bắt đầu hành trình sáng tạo của bạn từ số 0
               </h3>
               <p className="text-xs sm:text-sm text-stone-400">
-                Nhận ngay 01 buổi học thử miễn phí trị giá 350.000đ dành cho học viên mới tại 5 cơ sở HN &amp; TP.HCM.
+                Nhận ngay 01 buổi học thử miễn phí trị giá 350.000đ dành cho học viên mới tại 5 cơ sở Hà Nội &amp; Hải Phòng.
               </p>
             </div>
           </div>

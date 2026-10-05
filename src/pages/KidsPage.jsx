@@ -470,8 +470,8 @@ export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
                       <option value="hn-badinh">CS1: Ba Đình - Hà Nội</option>
                       <option value="hn-caugiay">CS2: Cầu Giấy - Hà Nội</option>
                       <option value="hn-tayho">CS3: Tây Hồ - Hà Nội</option>
-                      <option value="hcm-q3">CS4: Quận 3 - TP.HCM</option>
-                      <option value="hcm-binhthanh">CS5: Bình Thạnh - TP.HCM</option>
+                      <option value="hp-lechan">CS4: Lê Chân - Hải Phòng</option>
+                      <option value="hp-ngoquyen">CS5: Ngô Quyền - Hải Phòng</option>
                     </select>
                   </div>
 

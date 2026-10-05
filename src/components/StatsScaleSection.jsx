@@ -9,7 +9,7 @@ export const StatsScaleSection = () => {
       number: '05',
       unit: 'Cơ sở',
       title: 'Xưởng Vẽ Hiện Đại',
-      description: 'Tại các vị trí trung tâm Hà Nội & TP.HCM, không gian mở ngập tràn ánh sáng tự nhiên.',
+      description: 'Tại các vị trí trung tâm Hà Nội & Hải Phòng, không gian mở ngập tràn ánh sáng tự nhiên.',
       accent: 'text-amber-600 bg-amber-100 border-amber-300'
     },
     {
@@ -33,7 +33,7 @@ export const StatsScaleSection = () => {
       number: '100%',
       unit: 'Giáo viên',
       title: 'Tốt Nghiệp ĐH Mỹ Thuật',
-      description: 'Đội ngũ thầy cô tốt nghiệp chính quy ĐH Mỹ thuật VN & TP.HCM, kèm cặp tận tâm 1:1.',
+      description: 'Đội ngũ thầy cô tốt nghiệp chính quy ĐH Mỹ thuật VN & các trường nghệ thuật hàng đầu, kèm cặp 1:1.',
       accent: 'text-amber-800 bg-amber-100 border-amber-300'
     },
     {
@@ -85,7 +85,7 @@ export const StatsScaleSection = () => {
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-charcoal-600 leading-relaxed">
-            Hơn 6 năm tận tâm nuôi dưỡng tình yêu hội họa. Số Không tự hào là điểm đến quen thuộc của hơn 12.500 học viên tại Hà Nội và TP.HCM.
+            Hơn 6 năm tận tâm nuôi dưỡng tình yêu hội họa. Số Không tự hào là điểm đến quen thuộc của hơn 12.500 học viên tại Hà Nội và Hải Phòng.
           </p>
         </div>
 
