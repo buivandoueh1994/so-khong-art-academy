@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Clock, ArrowRight } from 'lucide-react';
+import { Sparkles, Clock, ArrowRight, Phone } from 'lucide-react';
 
 export const AnnouncementBar = ({ onOpenTrialModal }) => {
   // Countdown timer state
@@ -20,34 +20,48 @@ export const AnnouncementBar = ({ onOpenTrialModal }) => {
   const formatNumber = (num) => String(num).padStart(2, '0');
 
   return (
-    <div className="bg-charcoal-900 text-amber-100 text-xs sm:text-sm py-2 px-3 sm:px-4 border-b border-amber-500/20 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2 flex-1 min-w-[280px]">
-          <span className="inline-flex items-center gap-1 bg-brand-400 text-charcoal-900 font-bold px-2 py-0.5 rounded-full text-[11px] uppercase tracking-wider animate-pulse">
-            <Sparkles className="w-3 h-3" /> Ưu Đãi Tháng Này
+    <div className="bg-charcoal-900 text-amber-100 text-xs py-2 px-3 sm:px-4 border-b border-amber-500/20 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        
+        {/* Left: Promotion notice */}
+        <div className="flex items-center gap-2 overflow-hidden">
+          <span className="inline-flex items-center gap-1 bg-brand-400 text-charcoal-900 font-extrabold px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] uppercase tracking-wider flex-shrink-0 animate-pulse">
+            <Sparkles className="w-3 h-3" /> Ưu Đãi Tháng
           </span>
-          <p className="font-medium text-stone-200 truncate">
-            Tặng 100% học phí buổi trải nghiệm + Bộ cọ vẽ cơ bản cho 15 bạn đăng ký sớm!
+          <p className="font-medium text-stone-200 text-xs truncate">
+            Tặng 100% học phí buổi trải nghiệm + Bộ cọ vẽ cơ bản cho 15 bạn đầu tiên!
           </p>
         </div>
 
-        <div className="flex items-center gap-3 ml-auto text-xs">
-          <div className="hidden md:flex items-center gap-1.5 text-stone-300 font-mono bg-charcoal-800/80 px-2.5 py-1 rounded-md border border-stone-700">
-            <Clock className="w-3.5 h-3.5 text-brand-400" />
-            <span>Kết thúc sau:</span>
-            <span className="text-brand-300 font-bold">
+        {/* Right: Hotline + Countdown + Quick Trigger */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 text-xs">
+          
+          {/* Hotline prominently displayed in top bar */}
+          <a
+            href="tel:0988123456"
+            className="hidden lg:flex items-center gap-1.5 text-stone-300 hover:text-amber-300 font-semibold transition-colors"
+          >
+            <Phone className="w-3.5 h-3.5 text-amber-400" />
+            <span>Hotline: <strong className="text-white">0988.123.456</strong></span>
+          </a>
+
+          <div className="hidden sm:flex items-center gap-1.5 text-stone-300 font-mono bg-charcoal-800/90 px-2.5 py-0.5 rounded-md border border-stone-700">
+            <Clock className="w-3 h-3 text-brand-400" />
+            <span className="text-[11px]">Còn:</span>
+            <span className="text-brand-300 font-bold text-xs">
               {formatNumber(timeLeft.hours)}:{formatNumber(timeLeft.minutes)}:{formatNumber(timeLeft.seconds)}
             </span>
           </div>
 
           <button
             onClick={onOpenTrialModal}
-            className="inline-flex items-center gap-1 font-bold text-charcoal-900 bg-brand-400 hover:bg-brand-300 px-3 py-1 rounded-full transition-all text-xs shadow-sm hover:scale-105"
+            className="inline-flex items-center gap-1 font-bold text-charcoal-900 bg-brand-400 hover:bg-brand-300 px-3 py-1 rounded-full transition-all text-[11px] sm:text-xs shadow-sm hover:scale-105 whitespace-nowrap"
           >
-            Giữ chỗ ngay
+            <span>Giữ chỗ ngay</span>
             <ArrowRight className="w-3 h-3" />
           </button>
         </div>
+
       </div>
     </div>
   );
