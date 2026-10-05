@@ -267,77 +267,193 @@ export function generateBotResponse(userMessage, conversationHistory = []) {
     };
   }
 
-  // 2. Hỏi về Lớp Trẻ Em / Con / Bé
-  if (text.includes('bé') || text.includes('trẻ em') || text.includes('con') || text.includes('cháu') || text.includes('nhỏ') || text.includes('tuổi')) {
+  // 3. Khách hỏi Tư vấn lớp chung chung ("tư vấn lớp cho tôi", "tư vấn giúp", "có những lớp nào", "tôi muốn học vẽ",...)
+  const isGeneralConsultRequest =
+    text.includes('tư vấn lớp') ||
+    text.includes('tư vấn giúp') ||
+    text.includes('tư vấn cho') ||
+    text.includes('tư vấn khoá') ||
+    text.includes('tư vấn khóa') ||
+    text.includes('có những lớp nào') ||
+    text.includes('có những khoá nào') ||
+    text.includes('có những khóa nào') ||
+    text.includes('có các lớp nào') ||
+    text.includes('các lớp vẽ') ||
+    text.includes('các khóa học') ||
+    text.includes('các khoá học') ||
+    text.includes('học những gì') ||
+    text.includes('dạy những gì') ||
+    text.includes('tôi muốn học vẽ') ||
+    text.includes('mình muốn học vẽ') ||
+    text.includes('em muốn học vẽ') ||
+    text.includes('tìm hiểu lớp') ||
+    text.includes('tìm hiểu khóa') ||
+    text.includes('tìm hiểu khoá') ||
+    text.includes('chọn lớp') ||
+    text.includes('lớp nào phù hợp') ||
+    text.includes('khóa học nào') ||
+    text.includes('khoá học nào') ||
+    (text.includes('tư vấn') && !text.includes('học phí') && !text.includes('địa chỉ'));
+
+  if (isGeneralConsultRequest) {
+    return {
+      text: `Dạ em chào anh/chị! Em là **Cô Mai – Quản nhiệm lớp tại Xưởng Vẽ Số Không** ạ. 🎨\n\nHiện tại xưởng đang đào tạo **2 hệ thống lớp chuyên sâu** may đo theo từng đối tượng:\n\n🧒 **1. LỚP VẼ TRẺ EM (4 – 15 tuổi):**\n• **4–6 tuổi (Mầm Sáng Tạo):** Làm quen màu nước hữu cơ an toàn, rèn vận động tinh của đôi tay, tự do tưởng tượng (75 phút/buổi).\n• **7–10 tuổi (Năng Khiếu Nhí):** Dựng hình cơ bản, bánh xe màu sắc, kể câu chuyện của mình qua bức tranh hoàn chỉnh (90 phút/buổi).\n• **11–15 tuổi (Hội Họa Thiếu Niên):** Bố cục phối cảnh Perspective, sáng tối Chiaroscuro, Acrylic toan vẽ & Manga (120 phút/buổi).\n*(Đặc biệt: 100% không gò bó khuôn mẫu, không vẽ hộ con).* \n\n🌿 **2. MỸ THUẬT NGƯỜI LỚN (16+ tuổi):**\n• Dành cho người đi làm & sinh viên muốn giải tỏa căng thẳng sau giờ làm việc.\n• **Kèm cặp 1:1 từ con số 0** – hơn 92% học viên chưa từng cầm cọ vẫn vẽ được tranh đẹp ngay buổi đầu.\n• Đa dạng chất liệu: **Acrylic trên toan**, **Màu nước trong trẻo**, **Sơn dầu cổ điển** hoặc **Ký họa phố cổ**.\n\n👉 Không biết **mình đang quan tâm tìm lớp cho bé yêu hay cho bản thân/người lớn** ạ? Anh/chị bấm chọn nhanh bên dưới hoặc nhắn độ tuổi để em hỗ trợ nhé!`,
+      showLeadCard: false,
+      quickReplies: ['🎨 Lớp Vẽ Cho Bé (4–15t)', '🖌️ Mỹ Thuật Người Lớn', '⚡ Suất học thử 0đ', '📍 5 Cơ sở HN & HP']
+    };
+  }
+
+  // 4. Khách hỏi cụ thể về Lớp Trẻ Em / Con / Bé / Độ tuổi
+  if (text.includes('bé') || text.includes('trẻ em') || text.includes('con') || text.includes('cháu') || text.includes('nhỏ') || text.includes('thiếu nhi') || (text.includes('tuổi') && !text.includes('người lớn'))) {
     if (text.includes('4') || text.includes('5') || text.includes('6')) {
       return {
-        text: `Dạ với các bé từ 4–6 tuổi, xưởng có lớp **Mầm Sáng Tạo** (75 phút/buổi) ạ! 🐣\n\nỞ độ tuổi này, các cô tập trung rèn luyện **vận động tinh** của đôi tay, cho con làm quen với màu nước hữu cơ an toàn và kích thích trí tưởng tượng qua trò chơi màu sắc. Tuyệt đối không gò bó khuôn mẫu hay cầm tay vẽ hộ con đâu ạ.\n\nTuần này xưởng đang có **suất học thử miễn phí (0đ)** cho bé. Anh/chị cho em xin **Số điện thoại hoặc Zalo** để em giữ chỗ và gửi định vị phòng học cho gia đình nhé!`,
-        showLeadCard: true
+        text: `Dạ với các bé từ **4–6 tuổi**, xưởng có lớp **Mầm Sáng Tạo** (75 phút/buổi) ạ! 🐣\n\nỞ độ tuổi này, các cô tập trung rèn luyện **vận động tinh** của đôi tay, cho con làm quen với màu nước hữu cơ an toàn và kích thích trí tưởng tượng qua trò chơi màu sắc. Tuyệt đối không gò bó khuôn mẫu hay cầm tay vẽ hộ con đâu ạ.\n\n🎁 Tuần này xưởng đang có **suất học thử miễn phí (0đ)** (bao trọn màu vẽ, giấy vẽ cao cấp). Anh/chị cho em xin **Số điện thoại hoặc Zalo** để em giữ chỗ và gửi định vị phòng học cho gia đình nhé!`,
+        showLeadCard: true,
+        quickReplies: ['⚡ Giữ suất học thử 0đ cho bé', '📍 Xem 5 cơ sở HN & HP', '⏰ Lịch học cuối tuần']
       };
     }
     if (text.includes('7') || text.includes('8') || text.includes('9') || text.includes('10')) {
       return {
-        text: `Dạ bé trong độ tuổi 7–10 tuổi sẽ học lớp **Năng Khiếu Nhí** (90 phút/buổi) ạ! 🎨\n\nCác bé sẽ được thầy cô ĐH Mỹ thuật hướng dẫn dựng hình cơ bản, quy luật phối màu tương phản và tự tay kể câu chuyện của mình qua bức tranh hoàn chỉnh. Sau mỗi buổi vẽ, xưởng đều gửi ảnh sản phẩm và nhận xét của thầy cô cho phụ huynh.\n\nAnh/chị có muốn đăng ký cho bé trải nghiệm **01 buổi học thử miễn phí (0đ)** cuối tuần này không ạ? Anh/chị để lại **Số điện thoại/Zalo** em giữ chỗ cho bé nhé!`,
-        showLeadCard: true
+        text: `Dạ bé trong độ tuổi **7–10 tuổi** sẽ học lớp **Năng Khiếu Nhí** (90 phút/buổi) ạ! 🎨\n\nCác bé sẽ được thầy cô ĐH Mỹ thuật hướng dẫn dựng hình cơ bản, quy luật phối màu tương phản và tự tay kể câu chuyện của mình qua bức tranh hoàn chỉnh. Sau mỗi buổi vẽ, xưởng đều chụp ảnh sản phẩm và gửi nhận xét chi tiết của thầy cô cho phụ huynh.\n\n🎁 Anh/chị có muốn đăng ký cho bé trải nghiệm **01 buổi học thử miễn phí (0đ)** cuối tuần này không ạ? Anh/chị để lại **Số điện thoại/Zalo** em giữ chỗ cho bé nhé!`,
+        showLeadCard: true,
+        quickReplies: ['⚡ Giữ suất học thử 0đ cho bé', '📍 Xem 5 cơ sở HN & HP', '⏰ Lịch học cuối tuần']
+      };
+    }
+    if (text.includes('11') || text.includes('12') || text.includes('13') || text.includes('14') || text.includes('15')) {
+      return {
+        text: `Dạ các bạn từ **11–15 tuổi** sẽ tham gia lớp **Hội Họa Thiếu Niên** (120 phút/buổi) ạ! 🏛️\n\nChương trình chuyên sâu về luật phối cảnh không gian, sáng tối, vẽ chất liệu Acrylic trên toan vải canvas và sáng tác phong cách truyện tranh Manga/Anime. Rất tốt cho các bạn định hướng thi năng khiếu hoặc phát triển thẩm mỹ cá nhân.\n\n🎁 Xưởng đang tài trợ **01 buổi vẽ thử 0đ trên toan canvas thật**. Anh/chị để lại **Số điện thoại/Zalo** em gửi thời khóa biểu lớp thiếu niên tuần này nhé!`,
+        showLeadCard: true,
+        quickReplies: ['⚡ Giữ suất học thử 0đ', '⏰ Lịch học ca tối/cuối tuần']
       };
     }
     return {
-      text: `Dạ chào anh/chị! Lớp vẽ trẻ em tại Số Không nhận các bé từ **4 đến 15 tuổi** với 3 cấp độ may đo riêng:\n\n• **4–6 tuổi:** Mầm Sáng Tạo (vận động tinh, màu hữu cơ)\n• **7–10 tuổi:** Năng Khiếu Nhí (dựng hình, phối màu sắc)\n• **11–15 tuổi:** Hội Họa Thiếu Niên (bố cục, acrylic & manga)\n\nBé nhà mình năm nay mấy tuổi rồi ạ? Anh/chị nhắn độ tuổi của bé hoặc để lại **Số điện thoại/Zalo** để cô giáo tư vấn lớp phù hợp nhất cho con nhé!`,
-      showLeadCard: true
+      text: `Dạ chào anh/chị! Lớp vẽ trẻ em tại Số Không nhận các bé từ **4 đến 15 tuổi** với 3 cấp độ may đo riêng:\n\n• **4–6 tuổi (Mầm Sáng Tạo):** Vận động tinh, màu nước hữu cơ an toàn.\n• **7–10 tuổi (Năng Khiếu Nhí):** Dựng hình, bánh xe màu sắc, kể chuyện qua tranh.\n• **11–15 tuổi (Hội Họa Thiếu Niên):** Bố cục không gian, Acrylic toan vẽ & Manga.\n\nBé nhà mình năm nay mấy tuổi rồi ạ? Anh/chị nhắn độ tuổi của bé hoặc để lại **Số điện thoại/Zalo** để cô giáo tư vấn lớp phù hợp nhất cho con nhé!`,
+      showLeadCard: true,
+      quickReplies: ['Bé 4–6 tuổi', 'Bé 7–10 tuổi', 'Bé 11–15 tuổi', '⚡ Đăng ký học thử 0đ']
     };
   }
 
-  // 3. Hỏi về Lớp Người Lớn / Chưa biết vẽ / Đi làm
-  if (text.includes('người lớn') || text.includes('đi làm') || text.includes('sinh viên') || text.includes('chưa biết vẽ') || text.includes('hoa tay') || text.includes('năng khiếu')) {
+  // 5. Khách hỏi về Lớp Người Lớn / Chưa biết vẽ / Đi làm / Hoa tay / Năng khiếu
+  if (
+    text.includes('người lớn') ||
+    text.includes('đi làm') ||
+    text.includes('sinh viên') ||
+    text.includes('chưa biết vẽ') ||
+    text.includes('không biết vẽ') ||
+    text.includes('chưa cầm cọ') ||
+    text.includes('hoa tay') ||
+    text.includes('năng khiếu') ||
+    text.includes('bắt đầu từ đầu') ||
+    text.includes('mới bắt đầu') ||
+    text.includes('cho người lớn')
+  ) {
     return {
-      text: `Dạ anh/chị hoàn toàn yên tâm nhé! Hơn **92% học viên người lớn** tại Số Không ban đầu đều chưa từng cầm cọ và nghĩ mình không có hoa tay ạ. 🌿\n\nTại xưởng, thầy cô sẽ hướng dẫn chia nhỏ từng bước từ dựng hình đến pha màu rất logic. Không gian xưởng mở có trà hoa, nhạc nhẹ thư giãn sau giờ làm việc.\n\nAnh/chị có thể lựa chọn: **Acrylic trên toan**, **Màu nước**, **Sơn dầu** hoặc **Ký họa phố cổ**. Lịch học ca tối (18h30–21h00) hoặc cuối tuần rất linh hoạt.\n\nAnh/chị có muốn ghé xưởng vẽ thử một bức tranh mang về trong **buổi trải nghiệm 0đ** tuần này không ạ? Nhắn em **Số điện thoại/Zalo** để em giữ chỗ nhé!`,
-      showLeadCard: true
+      text: `Dạ anh/chị hoàn toàn yên tâm nhé! Hơn **92% học viên người lớn** tại Số Không ban đầu đều chưa từng cầm cọ và nghĩ mình không có hoa tay ạ. 🌿\n\nTại xưởng, thầy cô sẽ hướng dẫn chia nhỏ từng bước từ dựng hình đến pha phối màu rất trực quan logic. Không gian xưởng mở có trà hoa, nhạc nhẹ thư giãn sau giờ làm việc.\n\nAnh/chị có thể lựa chọn 4 chất liệu tùy thích:\n• **Acrylic trên toan:** Dễ vẽ nhất, nhanh khô, màu sắc rực rỡ, mang tranh về treo ngay.\n• **Màu Nước (Watercolor):** Trong trẻo, thi vị, tĩnh lặng chữa lành tâm hồn.\n• **Sơn Dầu cổ điển:** Đẳng cấp, chiều sâu hòa sắc sang trọng.\n• **Ký Họa bút sắt & chì:** Thích hợp vẽ góc phố Hà Nội/Hải Phòng, du lịch đời sống.\n\nLịch học ca tối (18h30–21h00) hoặc cuối tuần rất linh hoạt. Tuần này xưởng đang có **suất học thử miễn phí (0đ)** tài trợ trọn gói toan vẽ & màu vẽ. Mình có muốn ghé xưởng vẽ thử 1 bức mang về không ạ? Nhắn em **Số điện thoại/Zalo** để em giữ chỗ nhé!`,
+      showLeadCard: true,
+      quickReplies: ['Khóa vẽ Acrylic toan', 'Khóa Màu Nước thư giãn', 'Khóa Sơn Dầu cổ điển', '⚡ Đăng ký học thử 0đ']
     };
   }
 
-  // 4. Hỏi về Cơ sở / Địa chỉ / Hải Phòng / Hà Nội
-  if (text.includes('địa chỉ') || text.includes('cơ sở') || text.includes('ở đâu') || text.includes('hải phòng') || text.includes('hà nội') || text.includes('chỗ nào')) {
+  // 6. Hỏi chi tiết về chất liệu vẽ cụ thể
+  if (text.includes('màu nước') || text.includes('watercolor')) {
     return {
-      text: `Dạ hiện tại Xưởng Vẽ Số Không có **05 cơ sở hiện đại** tại Hà Nội và Hải Phòng ạ:\n\n📍 **Hà Nội (03 cơ sở):**\n1. Ba Đình: Số 18, Ngõ 92 Kim Mã\n2. Cầu Giấy: Tầng 3, 126 Hoàng Quốc Việt\n3. Tây Hồ: Số 45 Tô Ngọc Vân, Quảng An\n\n📍 **Hải Phòng (02 cơ sở):**\n4. Lê Chân: Số 82 Mê Linh, An Biên\n5. Ngô Quyền: Số 15 Lạch Tray\n\nMình đang ở gần khu vực nào nhất ạ? Anh/chị để lại **Số điện thoại/Zalo**, em gửi vị trí Google Maps và xếp lịch ghé xưởng gần nhà mình nhất nha!`,
-      showLeadCard: true
+      text: `Dạ khóa **Màu Nước (Watercolor)** tại Số Không rất được các bạn yêu thích nhờ tính chất trong trẻo, tĩnh lặng và chữa lành tâm hồn ạ! 💧\n\nBạn sẽ được hướng dẫn làm chủ các kỹ thuật: loang ướt trên ướt (wet-on-wet), chồng lớp tạo chiều sâu trên giấy vẽ Arches/Baohong 300gsm cao cấp. Tranh vẽ xong có thể đóng khung bàn làm việc hoặc làm thiệp tặng bạn bè.\n\nTuần này xưởng đang có **suất trải nghiệm màu nước 0đ**. Bạn để lại **Số điện thoại/Zalo** mình giữ chỗ cho bạn nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử Màu Nước 0đ', '⏰ Lịch học ca tối', '💰 Học phí khóa màu nước']
     };
   }
 
-  // 5. Hỏi về Học phí / Giá / Chi phí / Miễn phí
-  if (text.includes('học phí') || text.includes('giá') || text.includes('bao nhiêu') || text.includes('tiền') || text.includes('chi phí') || text.includes('miễn phí')) {
+  if (text.includes('acrylic')) {
     return {
-      text: `Dạ buổi học thử đầu tiên là **100% MIỄN PHÍ (0đ)** ạ! Xưởng tài trợ sẵn toàn bộ toan vẽ, màu vẽ và họa cụ cao cấp, vẽ xong mình được mang tranh về nhà luôn ạ. 🎁\n\nHọc phí các khóa chính thức dao động rất hợp lý theo từng lộ trình (đã bao gồm toàn bộ họa cụ, không phát sinh thêm). Đặc biệt xưởng hỗ trợ **học bù và bảo lưu tự do** khi bận việc.\n\nAnh/chị cho em xin **Tên + Số điện thoại/Zalo** để em gửi chi tiết bảng học phí và ưu đãi giảm 20% tháng này qua Zalo cho mình nhé!`,
-      showLeadCard: true
+      text: `Dạ **Acrylic trên toan canvas** là chất liệu lý tưởng nhất cho người mới bắt đầu ạ! 🖼️\n\nƯu điểm của Acrylic là độ che phủ cực tốt (vẽ sai tô đè lên sửa được ngay), nhanh khô và màu sắc rất rực rỡ hiện đại. Sau buổi vẽ 90–120 phút, bạn sẽ tự tay hoàn thiện ngay 1 bức tranh kích thước 30x40cm hoặc 40x50cm mang về treo phòng khách hay phòng ngủ luôn ạ!\n\nNhắn em **Số điện thoại/Zalo** để nhận suất học thử Acrylic 0đ tuần này nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử Acrylic 0đ', '📍 Xem 5 cơ sở HN & HP']
     };
   }
 
-  // 6. Hỏi về Lịch học / Thời gian / Buổi tối / Cuối tuần
-  if (text.includes('lịch') || text.includes('thời gian') || text.includes('giờ') || text.includes('cuối tuần') || text.includes('tối')) {
+  if (text.includes('sơn dầu') || text.includes('oil')) {
     return {
-      text: `Dạ thời khóa biểu tại xưởng cực kỳ linh hoạt ạ:\n\n• **Lớp Người Lớn:** Ca tối các ngày trong tuần (18h30 – 21h00) và các ca Sáng / Chiều / Tối Thứ 7 & Chủ Nhật.\n• **Lớp Trẻ Em:** Sáng & Chiều Thứ 7, Chủ Nhật; hoặc ca chiều tan trường trong tuần (17h00 – 18h30).\n\nNếu có hôm bận việc hoặc con ốm, anh/chị chỉ cần báo trước là được **xếp học bù vào ca khác** không bị mất buổi ạ. Mình đang quan tâm ca học nào ạ? Nhắn em số Zalo để em gửi lịch trống tuần này nha!`,
-      showLeadCard: true
+      text: `Dạ khóa **Sơn Dầu (Oil Painting)** là đỉnh cao của hội họa cổ điển với chiều sâu màu sắc và độ bền hàng trăm năm ạ! 🎨\n\nTại Số Không, bạn được hướng dẫn kỹ thuật hòa sắc, đắp nổi bay vẽ palette knife và các lớp láng màu truyền thống. Xưởng sử dụng dung môi dầu lanh cao cấp không mùi độc hại, an toàn tuyệt đối.\n\nNhắn em **Số điện thoại/Zalo** để được xếp lịch trải nghiệm sơn dầu nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử Sơn Dầu 0đ', '💰 Học phí khóa sơn dầu']
     };
   }
 
-  // 7. Hỏi về Đăng ký học thử / Trải nghiệm
+  if (text.includes('ký họa') || text.includes('sketch') || text.includes('bút sắt') || text.includes('chì')) {
+    return {
+      text: `Dạ khóa **Ký Họa Phố Cổ & Đời Sống** giúp bạn rèn luyện khả năng quan sát và bắt trọn khoảnh khắc chỉ bằng chiếc bút kim, bút sắt hoặc bút chì ạ! ✒️\n\nBạn sẽ học cách bắt dáng nhân vật nhanh, luật viễn cận phối cảnh góc phố cổ Hà Nội / Hải Phòng và điểm màu nước sinh động vào cuốn sổ ký họa du lịch.\n\nNhắn em **Số điện thoại/Zalo** để nhận thời khóa biểu lớp ký họa tuần này nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử Ký Họa 0đ', '⏰ Lịch học cuối tuần']
+    };
+  }
+
+  // 7. Hỏi về Địa chỉ / Cơ sở / Hải Phòng / Hà Nội
+  if (text.includes('địa chỉ') || text.includes('cơ sở') || text.includes('ở đâu') || text.includes('hải phòng') || text.includes('hà nội') || text.includes('chỗ nào') || text.includes('chi nhánh') || text.includes('địa điểm')) {
+    return {
+      text: `Dạ hiện tại Xưởng Vẽ Số Không có **05 cơ sở hiện đại** tại Hà Nội và Hải Phòng ạ: 🎨\n\n📍 **Hà Nội (03 cơ sở):**\n1. **CS1 Ba Đình:** Số 18, Ngõ 92 Kim Mã, Ba Đình\n2. **CS2 Cầu Giấy:** Tầng 3, 126 Hoàng Quốc Việt, Cầu Giấy\n3. **CS3 Tây Hồ:** Số 45 Tô Ngọc Vân, Quảng An, Tây Hồ\n\n📍 **Hải Phòng (02 cơ sở):**\n4. **CS4 Lê Chân:** Số 82 Mê Linh, An Biên, Lê Chân\n5. **CS5 Ngô Quyền:** Số 15 Lạch Tray, Ngô Quyền\n\nTất cả cơ sở đều có điều hòa, phòng học thoáng sáng, giá vẽ gỗ sồi và trà hoa thư giãn. Mình đang ở gần khu vực nào nhất ạ? Anh/chị để lại **Số điện thoại/Zalo**, em gửi vị trí Google Maps và xếp lịch ghé xưởng gần nhà mình nhất nha!`,
+      showLeadCard: true,
+      quickReplies: ['CS1: Ba Đình (HN)', 'CS2: Cầu Giấy (HN)', 'CS3: Tây Hồ (HN)', 'CS4: Lê Chân (HP)', 'CS5: Ngô Quyền (HP)']
+    };
+  }
+
+  // 8. Hỏi về Học phí / Giá / Chi phí / Tiền học
+  if (text.includes('học phí') || text.includes('giá') || text.includes('bao nhiêu tiền') || text.includes('tiền') || text.includes('chi phí') || text.includes('bảng giá') || text.includes('phí')) {
+    return {
+      text: `Dạ tại Xưởng Vẽ Số Không:\n🎁 **Buổi học thử đầu tiên (90–120 phút) là 100% MIỄN PHÍ (0đ)** (trị giá 350.000đ) ạ! Xưởng tài trợ sẵn toàn bộ toan vẽ, màu vẽ và họa cụ cao cấp, vẽ xong mình được mang tranh về nhà luôn ạ.\n\n📚 **Học phí các khóa chính thức:**\n• Rất hợp lý và **đã bao gồm trọn gói 100% họa cụ cao cấp** (không phát sinh bất kỳ phụ phí nào).\n• Được **học bù tự do, bảo lưu không giới hạn** số buổi khi bận việc hoặc ốm.\n• Tháng này xưởng đang có ưu đãi **giảm 20% học phí** khi đăng ký theo khóa.\n\nAnh/chị cho em xin **Tên + Số điện thoại/Zalo** để em gửi chi tiết bảng học phí và ưu đãi giảm 20% qua Zalo cho mình nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Giữ suất học thử 0đ', '📍 Xem 5 cơ sở HN & HP', '⏰ Lịch học trong tuần']
+    };
+  }
+
+  // 9. Hỏi về Lịch học / Thời gian / Buổi tối / Cuối tuần / Học bù
+  if (text.includes('lịch') || text.includes('thời gian') || text.includes('giờ') || text.includes('cuối tuần') || text.includes('tối') || text.includes('thứ 7') || text.includes('chủ nhật') || text.includes('ca học') || text.includes('học bù')) {
+    return {
+      text: `Dạ thời khóa biểu tại xưởng cực kỳ linh hoạt cho người bận rộn và học sinh ạ:\n\n• **Lớp Người Lớn:** Ca tối các ngày trong tuần (18h30 – 21h00) và các ca Sáng / Chiều / Tối Thứ 7 & Chủ Nhật.\n• **Lớp Trẻ Em:** Sáng & Chiều Thứ 7, Chủ Nhật; hoặc ca chiều tan trường trong tuần (17h00 – 18h30).\n\n✨ **Đặc quyền học bù:** Nếu có hôm bận việc hoặc con ốm, anh/chị chỉ cần báo trước là được **xếp học bù vào ca khác** không bị mất buổi ạ.\n\nMình đang quan tâm ca học nào ạ? Nhắn em số Zalo để em gửi lịch trống tuần này nha!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử ca tối', '⚡ Đăng ký học thử cuối tuần', '📍 Địa chỉ 5 cơ sở']
+    };
+  }
+
+  // 10. Hỏi về Giáo viên / Giảng viên
+  if (text.includes('giáo viên') || text.includes('thầy cô') || text.includes('ai dạy') || text.includes('giảng viên')) {
+    return {
+      text: `Dạ tại Xưởng Vẽ Số Không, **100% giáo viên đều tốt nghiệp chính quy ĐH Mỹ thuật Việt Nam hoặc ĐH Mỹ thuật Công nghiệp** và có chứng chỉ nghiệp vụ sư phạm ạ. 👩‍🏫\n\nCác thầy cô trẻ trung, nhiệt huyết, phương pháp sư phạm kiên nhẫn và kèm cặp 1:1 theo năng lực từng học viên.\nĐặc biệt, xưởng tuân thủ nguyên tắc: **Tuyệt đối không cầm tay vẽ hộ hay áp đặt khuôn mẫu**, chỉ hướng dẫn tư duy dựng hình và kỹ thuật hòa sắc để học viên tự tay tạo nên bức tranh mang đậm cá tính của chính mình!\n\nAnh/chị để lại số Zalo để nhận hồ sơ năng lực và các tác phẩm của thầy cô nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử 0đ', '🎨 Xem tranh học viên']
+    };
+  }
+
+  // 11. Hỏi về Mang tranh về / Tranh vẽ xong
+  if (text.includes('mang về') || text.includes('lấy tranh') || text.includes('giữ tranh') || text.includes('tranh vẽ xong')) {
+    return {
+      text: `Dạ 100% tranh vẽ tại xưởng là **thuộc về bạn và được mang về nhà ngay sau buổi học** ạ! 🖼️\n\nXưởng có sẵn máy sấy nhiệt để tranh khô ráo, bao bọc cẩn thận và hướng dẫn bạn cách bảo quản, treo tranh phong thủy đẹp nhất tại nhà hoặc phòng làm việc.\n\nNhắn em **Số điện thoại/Zalo** để đăng ký buổi trải nghiệm 0đ mang tranh đầu tay về treo nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Đăng ký học thử 0đ mang tranh về', '📍 Xem 5 cơ sở']
+    };
+  }
+
+  // 12. Hỏi về Đăng ký học thử / Trải nghiệm
   if (text.includes('đăng ký') || text.includes('học thử') || text.includes('trải nghiệm') || text.includes('giữ chỗ')) {
     return {
-      text: `Dạ tuyệt vời quá ạ! Buổi học thử 90 phút tại Số Không hoàn toàn **miễn phí (0đ)**, mình không cần chuẩn bị bất cứ dụng cụ gì vì xưởng đã lo trọn gói từ A-Z rồi ạ. 🎨\n\nTuần này mỗi cơ sở chỉ còn **4 suất học thử 0đ**. Anh/chị điền thông tin nhanh dưới đây hoặc nhắn em **Số điện thoại** để em giữ chỗ ngay cho mình nhé!`,
-      showLeadCard: true
+      text: `Dạ tuyệt vời quá ạ! Buổi học thử 90 phút tại Số Không hoàn toàn **MIỄN PHÍ (0đ)**, mình không cần chuẩn bị bất cứ dụng cụ gì vì xưởng đã lo trọn gói từ A-Z rồi ạ. 🎨\n\nTuần này mỗi cơ sở chỉ còn **4 suất học thử 0đ**. Anh/chị điền thông tin nhanh dưới đây hoặc nhắn em **Số điện thoại** để em giữ chỗ ngay cho mình nhé!`,
+      showLeadCard: true,
+      quickReplies: ['⚡ Điền form giữ chỗ 0đ', '📍 Xem 5 cơ sở HN & HP']
     };
   }
 
-  // 8. Chào hỏi thông thường
-  if (text.includes('chào') || text.includes('hello') || text.includes('hi') || text.includes('alo') || text.includes('ơi')) {
+  // 13. Chào hỏi thông thường
+  if (text.includes('chào') || text.includes('hello') || text.includes('hi') || text.includes('alo') || text.includes('ơi') || text.includes('ad ơi') || text.includes('cô mai')) {
     return {
-      text: `Dạ em chào anh/chị! Em là trợ lý tư vấn tại **Xưởng Vẽ Số Không** ạ. 🎨\n\nKhông biết anh/chị đang muốn tìm hiểu lớp vẽ sáng tạo cho **bé yêu** hay lớp mỹ thuật thư giãn cho **người lớn** ạ? Em có thể giúp gì cho mình hôm nay ạ?`,
-      showLeadCard: false
+      text: `Dạ em chào anh/chị! Em là **Cô Mai – Quản nhiệm lớp tại Xưởng Vẽ Số Không** ạ. 🎨\n\nKhông biết anh/chị đang muốn tìm hiểu lớp vẽ sáng tạo cho **bé yêu (4–15 tuổi)** hay lớp mỹ thuật thư giãn cho **người lớn** để em hỗ trợ tư vấn lộ trình phù hợp nhất ạ?`,
+      showLeadCard: false,
+      quickReplies: ['🎨 Lớp Vẽ Cho Bé (4–15t)', '🖌️ Mỹ Thuật Người Lớn', '⚡ Suất học thử 0đ', '📍 5 Cơ sở HN & HP']
     };
   }
 
-  // 9. Phản hồi mặc định thông minh & dẫn dắt về giá trị
+  // 14. Phản hồi mặc định thông minh & dẫn dắt về giá trị
   return {
-    text: `Dạ em hiểu thắc mắc của mình rồi ạ! Tại Xưởng Vẽ Số Không, mọi học viên đều bắt đầu từ **con số 0**, được giáo viên ĐH Mỹ thuật kèm 1:1 theo giáo trình may đo riêng.\n\nHiện xưởng đang có chương trình **Tài trợ 100% học phí buổi trải nghiệm 0đ** tại cả 5 cơ sở Hà Nội & Hải Phòng. Anh/chị có muốn đăng ký thử 1 buổi không ạ?\n\nAnh/chị để lại **Số điện thoại / Zalo** hoặc nhấn các nút gợi ý bên dưới để em hỗ trợ nhanh nhất nhé!`,
-    showLeadCard: true
+    text: `Dạ em là **Cô Mai tại Xưởng Vẽ Số Không** ạ! 🎨\n\nEm luôn sẵn sàng hỗ trợ mình về:\n• 🎨 **Tư vấn chọn lớp:** Lớp bé (4–15 tuổi) hoặc Mỹ thuật người lớn (từ số 0)\n• ⚡ **Đăng ký học thử 0đ:** Trải nghiệm 90 phút miễn phí & mang tranh về\n• 📍 **Địa chỉ 5 cơ sở:** Tại Hà Nội & Hải Phòng\n• 💰 **Học phí & Thời khóa biểu linh hoạt**\n\nAnh/chị đang quan tâm thông tin nào nhất ạ? Nhắn em hoặc bấm các nút gợi ý bên dưới để em hỗ trợ nhanh nhất nhé!`,
+    showLeadCard: true,
+    quickReplies: ['🎨 Tư vấn chọn lớp', '⚡ Đăng ký học thử 0đ', '💰 Bảng học phí', '📍 Xem 5 cơ sở']
   };
 }

@@ -117,7 +117,8 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
         sender: 'bot',
         text: botReply.text,
         showLeadCard: botReply.showLeadCard && !leadFormSubmitted,
-        branchOptions: botReply.branchOptions || null
+        branchOptions: botReply.branchOptions || null,
+        quickReplies: botReply.quickReplies || null
       };
 
       setMessages(prev => [...prev, botMsg]);
@@ -365,6 +366,24 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
                             className="text-[11px] bg-amber-50 hover:bg-amber-200 text-charcoal-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg transition-all shadow-2xs hover:scale-105 active:scale-95 text-left"
                           >
                             {opt.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Contextual Quick Replies Buttons */}
+                  {msg.quickReplies && !leadFormSubmitted && (
+                    <div className="mt-2.5 pt-2 border-t border-amber-200/70">
+                      <div className="flex flex-wrap gap-1.5">
+                        {msg.quickReplies.map((replyText, rIdx) => (
+                          <button
+                            key={rIdx}
+                            type="button"
+                            onClick={() => handleSendMessage(replyText)}
+                            className="text-[11px] bg-amber-100/70 hover:bg-amber-200 text-charcoal-900 border border-amber-300/80 font-medium px-2.5 py-1 rounded-full transition-all shadow-2xs hover:scale-105 active:scale-95"
+                          >
+                            {replyText}
                           </button>
                         ))}
                       </div>
