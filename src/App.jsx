@@ -7,6 +7,7 @@ import { AdultsPage } from './pages/AdultsPage';
 import { Footer } from './components/Footer';
 import { FloatingQuickChat } from './components/FloatingQuickChat';
 import { TrialModal } from './components/TrialModal';
+import { ChatWidget } from './components/ChatWidget';
 
 export function App() {
   const [currentView, setCurrentView] = useState('home'); // 'home' | 'kids' | 'adults'
@@ -101,6 +102,9 @@ export function App() {
 
       {/* Floating Quick Chat (Zalo, Messenger, Quick Trial) */}
       <FloatingQuickChat onOpenTrialModal={() => handleOpenTrialModal(selectedAudience)} />
+
+      {/* 12. Smart Consultative AI Chatbot (Cô Mai - Tư Vấn Số Không) */}
+      <ChatWidget />
 
       {/* Instant Registration Modal */}
       <TrialModal
