@@ -5,7 +5,6 @@ import { HomePage } from './pages/HomePage';
 import { KidsPage } from './pages/KidsPage';
 import { AdultsPage } from './pages/AdultsPage';
 import { Footer } from './components/Footer';
-import { FloatingQuickChat } from './components/FloatingQuickChat';
 import { TrialModal } from './components/TrialModal';
 import { ChatWidget } from './components/ChatWidget';
 
@@ -100,11 +99,8 @@ export function App() {
       {/* Footer with Branches & Contact */}
       <Footer onOpenTrialModal={() => handleOpenTrialModal(selectedAudience)} />
 
-      {/* Floating Quick Chat (Zalo, Messenger, Quick Trial) */}
-      <FloatingQuickChat onOpenTrialModal={() => handleOpenTrialModal(selectedAudience)} />
-
-      {/* 12. Smart Consultative AI Chatbot (Cô Mai - Tư Vấn Số Không) */}
-      <ChatWidget />
+      {/* 11. Unified Right Floating Cluster (Chatbot AI, Zalo, Học Thử 0đ) */}
+      <ChatWidget onOpenTrialModal={() => handleOpenTrialModal(selectedAudience)} />
 
       {/* Instant Registration Modal */}
       <TrialModal
