@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Phone, User, BookOpen, MapPin, ShieldCheck, CheckCircle, Clock, Gift, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
-import { sendLeadToGoogleSheet } from '../services/googleSheetService';
+import { sendLeadToGoogleSheet, formatBranchName } from '../services/googleSheetService';
 
 export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess }) => {
   const [formData, setFormData] = useState({
@@ -191,7 +191,7 @@ export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess })
                     Đăng Ký Giữ Chỗ Thành Công!
                   </h4>
                   <p className="text-sm text-charcoal-700 mb-6 max-w-md mx-auto leading-relaxed">
-                    Cảm ơn <strong>{formData.fullName}</strong>! Bộ phận tư vấn của Xưởng Vẽ Số Không sẽ liên hệ qua số điện thoại/Zalo <strong>{formData.phone}</strong> trong vòng 15 phút để xác nhận lịch học thử phù hợp nhất cho bạn.
+                    Cảm ơn <strong>{formData.fullName}</strong>! Tư vấn viên tại cơ sở <strong>{formatBranchName(formData.branch)}</strong> sẽ liên hệ lại với bạn sớm nhất (trong vòng 15 phút) qua số điện thoại/Zalo <strong>{formData.phone}</strong> để xác nhận lịch học thử và đón tiếp bạn chu đáo nhất.
                   </p>
 
                   <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200 text-xs text-amber-900 max-w-md mx-auto mb-6 text-left space-y-1">

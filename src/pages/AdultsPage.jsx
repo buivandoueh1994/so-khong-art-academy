@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
-import { sendLeadToGoogleSheet } from '../services/googleSheetService';
+import { sendLeadToGoogleSheet, formatBranchName } from '../services/googleSheetService';
 
 export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
   const [selectedMedium, setSelectedMedium] = useState('acrylic');
@@ -404,7 +404,7 @@ export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
                   Đã Nhận Đăng Ký Của Bạn!
                 </h4>
                 <p className="text-xs sm:text-sm text-charcoal-700 max-w-md mx-auto mb-6">
-                  Cảm ơn bạn <strong>{formData.fullName}</strong>. Xưởng Vẽ Số Không sẽ liên hệ qua điện thoại/Zalo <strong>{formData.phone}</strong> trong vòng 15 phút để gửi lịch hẹn và vị trí xưởng vẽ cho bạn.
+                  Cảm ơn bạn <strong>{formData.fullName}</strong>! Tư vấn viên tại cơ sở <strong>{formatBranchName(formData.branch)}</strong> sẽ liên hệ lại với bạn sớm nhất (trong vòng 15 phút) qua điện thoại/Zalo <strong>{formData.phone}</strong> để gửi lịch hẹn và vị trí xưởng vẽ cho bạn.
                 </p>
                 <button
                   onClick={() => setIsSubmitted(false)}

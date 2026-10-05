@@ -36,7 +36,63 @@ export function extractPhoneNumber(text) {
 }
 
 import { sendLeadToTelegram } from './telegramService.js';
-import { sendLeadToGoogleSheet } from './googleSheetService.js';
+import { sendLeadToGoogleSheet, formatBranchName } from './googleSheetService.js';
+
+/**
+ * Trợ giúp tên ngắn gọn của cơ sở cho thông báo
+ */
+export function getShortBranchName(branchId) {
+  const shortMap = {
+    'hn-badinh': 'Ba Đình (Hà Nội)',
+    'hn-caugiay': 'Cầu Giấy (Hà Nội)',
+    'hn-tayho': 'Tây Hồ (Hà Nội)',
+    'hp-lechan': 'Lê Chân (Hải Phòng)',
+    'hp-ngoquyen': 'Ngô Quyền (Hải Phòng)'
+  };
+  return shortMap[branchId] || branchId || 'gần bạn nhất';
+}
+
+/**
+ * Nhận diện cơ sở từ văn bản tin nhắn
+ */
+export function detectBranch(text) {
+  if (!text) return null;
+  const t = text.toLowerCase();
+  if (t.includes('ba đình') || t.includes('kim mã') || t.includes('cs1') || t.includes('cơ sở 1')) return 'hn-badinh';
+  if (t.includes('cầu giấy') || t.includes('hoàng quốc việt') || t.includes('cs2') || t.includes('cơ sở 2')) return 'hn-caugiay';
+  if (t.includes('tây hồ') || t.includes('tô ngọc vân') || t.includes('quảng an') || t.includes('cs3') || t.includes('cơ sở 3')) return 'hn-tayho';
+  if (t.includes('lê chân') || t.includes('mê linh') || t.includes('an biên') || t.includes('cs4') || t.includes('cơ sở 4')) return 'hp-lechan';
+  if (t.includes('ngô quyền') || t.includes('lạch tray') || t.includes('cs5') || t.includes('cơ sở 5')) return 'hp-ngoquyen';
+  if (t.includes('hải phòng')) return 'hp-lechan';
+  if (t.includes('hà nội')) return 'hn-badinh';
+  return null;
+}
+
+// Bộ nhớ lưu Lead đang chờ bổ sung thông tin cơ sở
+let memoryPendingLead = null;
+
+export function getPendingLead() {
+  if (typeof window !== 'undefined' && window.sessionStorage) {
+    try {
+      const data = sessionStorage.getItem('so_khong_pending_lead');
+      if (data) return JSON.parse(data);
+    } catch (_) {}
+  }
+  return memoryPendingLead;
+}
+
+export function setPendingLead(lead) {
+  memoryPendingLead = lead;
+  if (typeof window !== 'undefined' && window.sessionStorage) {
+    try {
+      if (lead) {
+        sessionStorage.setItem('so_khong_pending_lead', JSON.stringify(lead));
+      } else {
+        sessionStorage.removeItem('so_khong_pending_lead');
+      }
+    } catch (_) {}
+  }
+}
 
 /**
  * Phân tích ngữ cảnh đoạn chat để trích xuất Nhu cầu, Tên và Cơ sở nếu khách đề cập
@@ -49,7 +105,7 @@ export function analyzeCustomerIntent(conversationHistory = [], currentMessage =
 
   let need = 'Quan tâm đăng ký học thử 0đ (Tư vấn qua Chatbot AI)';
   let detectedName = '';
-  let branch = '';
+  let branch = detectBranch(allText);
 
   // 1. Nhận diện họ tên khách hàng
   const namePatterns = [
@@ -100,30 +156,26 @@ export function analyzeCustomerIntent(conversationHistory = [], currentMessage =
     }
   }
 
-  // 3. Nhận diện cơ sở quan tâm
-  if (allText.includes('ba đình') || allText.includes('kim mã')) branch = 'hn-badinh';
-  else if (allText.includes('cầu giấy') || allText.includes('hoàng quốc việt')) branch = 'hn-caugiay';
-  else if (allText.includes('tây hồ') || allText.includes('tô ngọc vân')) branch = 'hn-tayho';
-  else if (allText.includes('lê chân') || allText.includes('mê linh')) branch = 'hp-lechan';
-  else if (allText.includes('ngô quyền') || allText.includes('lạch tray')) branch = 'hp-ngoquyen';
-  else if (allText.includes('hải phòng')) branch = 'hp-lechan';
-  else if (allText.includes('hà nội')) branch = 'hn-badinh';
-
   return { detectedName, need, branch };
 }
 
 // Lưu trữ lead vào localStorage và gửi đồng thời về Telegram + Google Sheet
 export function saveLead(leadData) {
   try {
-    const existing = JSON.parse(localStorage.getItem('so_khong_leads') || '[]');
     const newLead = {
       id: `lead_${Date.now()}`,
       createdAt: new Date().toISOString(),
       ...leadData,
       source: leadData.source || 'Chatbot Tư Vấn'
     };
-    existing.unshift(newLead);
-    localStorage.setItem('so_khong_leads', JSON.stringify(existing));
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const existing = JSON.parse(localStorage.getItem('so_khong_leads') || '[]');
+        existing.unshift(newLead);
+        localStorage.setItem('so_khong_leads', JSON.stringify(existing));
+      } catch (_) {}
+    }
     
     // Gửi đồng thời về Telegram và Google Sheet Webhook khi có Lead hợp lệ
     sendLeadToTelegram(newLead);
@@ -144,22 +196,74 @@ export function saveLead(leadData) {
 export function generateBotResponse(userMessage, conversationHistory = []) {
   const text = userMessage.toLowerCase().trim();
   const phone = extractPhoneNumber(userMessage);
+  const pendingLead = getPendingLead();
+  const detectedBranch = detectBranch(userMessage);
 
-  // 1. Nếu khách hàng vừa gửi số điện thoại trong tin nhắn
-  if (phone) {
-    const intent = analyzeCustomerIntent(conversationHistory, userMessage);
-    saveLead({
-      name: intent.detectedName,
-      phone,
-      need: intent.need,
-      branch: intent.branch,
-      rawNote: userMessage,
+  // 1. TRƯỜNG HỢP A: Đã có SĐT chờ từ trước, và khách vừa chọn/nhắn cơ sở muốn học
+  if (pendingLead && detectedBranch) {
+    const finalBranch = detectedBranch;
+    const finalLead = {
+      name: pendingLead.name || '',
+      phone: pendingLead.phone,
+      branch: finalBranch,
+      need: pendingLead.need || 'Quan tâm đăng ký học thử 0đ',
+      note: pendingLead.rawNote ? `${pendingLead.rawNote} | Khách chọn cơ sở: ${userMessage}` : `Khách chọn cơ sở: ${userMessage}`,
       source: 'Chatbot Tư Vấn AI'
-    });
+    };
+
+    saveLead(finalLead);
+    setPendingLead(null); // Đã chốt lead thành công
+
     return {
-      text: `Dạ em đã nhận được số điện thoại **${phone}** của mình rồi ạ! 🎉\n\nBộ phận quản nhiệm lớp tại Xưởng Vẽ Số Không sẽ liên hệ qua Zalo/Điện thoại trong vòng **15 phút** để gửi thời khóa biểu chi tiết và xác nhận suất **học thử miễn phí (0đ)** cho mình.\n\nCho em hỏi thêm là mình đang đăng ký cho **bé** hay **người lớn** và mình tiện học ở cơ sở nào tại **Hà Nội** hay **Hải Phòng** nhất ạ?`,
+      text: `Dạ em cảm ơn ${finalLead.name ? 'anh/chị **' + finalLead.name + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã lưu thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** của mình tại **${formatBranchName(finalBranch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(finalBranch)} sẽ liên hệ lại với ${finalLead.name ? finalLead.name : 'mình'} sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${finalLead.phone}** để gửi thời khóa biểu và chuẩn bị họa cụ đón tiếp mình chu đáo nhất nhé ạ! 🎨`,
       showLeadCard: false,
       leadCaptured: true
+    };
+  }
+
+  // 2. TRƯỜNG HỢP B: Khách vừa gửi số điện thoại trong tin nhắn
+  if (phone) {
+    const intent = analyzeCustomerIntent(conversationHistory, userMessage);
+    const branch = intent.branch || detectedBranch;
+
+    // B1: Khách ĐÃ CÓ CẢ CƠ SỞ (Đủ điều kiện chốt lead theo quy định)
+    if (branch) {
+      saveLead({
+        name: intent.detectedName,
+        phone,
+        branch,
+        need: intent.need,
+        rawNote: userMessage,
+        source: 'Chatbot Tư Vấn AI'
+      });
+      setPendingLead(null);
+
+      return {
+        text: `Dạ em cảm ơn ${intent.detectedName ? 'anh/chị **' + intent.detectedName + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã chuyển thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** lớp **${intent.need}** của mình tới **${formatBranchName(branch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(branch)} sẽ liên hệ lại với ${intent.detectedName ? intent.detectedName : 'mình'} sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${phone}** để xác nhận lịch học và hoàn tất xếp lớp nhé ạ! 🎨`,
+        showLeadCard: false,
+        leadCaptured: true
+      };
+    }
+
+    // B2: Khách CHƯA NÓI CƠ SỞ -> CHỦ ĐỘNG HỎI CƠ SỞ TRƯỚC KHI CHỐT THÔNG TIN (Theo Quy tắc 2)
+    setPendingLead({
+      phone,
+      name: intent.detectedName,
+      need: intent.need,
+      rawNote: userMessage
+    });
+
+    return {
+      text: `Dạ em đã nhận được số điện thoại **${phone}** của mình rồi ạ! 🎉\n\nĐể xếp lớp và giữ suất **học thử miễn phí (0đ)** thuận tiện nhất cho mình, **anh/chị muốn học tại cơ sở nào** của xưởng ạ?\n\n📍 **Khu vực Hà Nội (03 cơ sở):**\n• **CS1 Ba Đình:** Số 18, Ngõ 92 Kim Mã\n• **CS2 Cầu Giấy:** Tầng 3, 126 Hoàng Quốc Việt\n• **CS3 Tây Hồ:** Số 45 Tô Ngọc Vân, Quảng An\n\n📍 **Khu vực Hải Phòng (02 cơ sở):**\n• **CS4 Lê Chân:** Số 82 Mê Linh, An Biên\n• **CS5 Ngô Quyền:** Số 15 Lạch Tray\n\n*(Anh/chị có thể bấm chọn nhanh các nút cơ sở bên dưới hoặc nhắn tên khu vực tiện đi lại nhất nhé!)*`,
+      showLeadCard: false,
+      leadCaptured: false,
+      branchOptions: [
+        { id: 'hn-badinh', name: 'CS1: Ba Đình (Hà Nội)' },
+        { id: 'hn-caugiay', name: 'CS2: Cầu Giấy (Hà Nội)' },
+        { id: 'hn-tayho', name: 'CS3: Tây Hồ (Hà Nội)' },
+        { id: 'hp-lechan', name: 'CS4: Lê Chân (Hải Phòng)' },
+        { id: 'hp-ngoquyen', name: 'CS5: Ngô Quyền (Hải Phòng)' }
+      ]
     };
   }
 

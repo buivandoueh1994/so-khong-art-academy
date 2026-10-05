@@ -35,17 +35,78 @@ export function normalizeVietnamesePhone(rawPhone) {
 }
 
 /**
+ * Helper format tên cơ sở sang dạng chuẩn và thân thiện
+ */
+export function formatBranchName(branchId) {
+  if (!branchId) return '';
+  const branchMap = {
+    'hn-badinh': 'CS1: Ba Đình, Hà Nội (Số 18 Ngõ 92 Kim Mã)',
+    'hn-caugiay': 'CS2: Cầu Giấy, Hà Nội (126 Hoàng Quốc Việt)',
+    'hn-tayho': 'CS3: Tây Hồ, Hà Nội (45 Tô Ngọc Vân)',
+    'hp-lechan': 'CS4: Lê Chân, Hải Phòng (82 Mê Linh)',
+    'hp-ngoquyen': 'CS5: Ngô Quyền, Hải Phòng (15 Lạch Tray)'
+  };
+  if (branchMap[branchId]) return branchMap[branchId];
+
+  const str = String(branchId).toLowerCase().trim();
+  if (str.includes('ba đình') || str.includes('kim mã') || str.includes('cs1') || str.includes('cơ sở 1')) {
+    return 'CS1: Ba Đình, Hà Nội (Số 18 Ngõ 92 Kim Mã)';
+  }
+  if (str.includes('cầu giấy') || str.includes('hoàng quốc việt') || str.includes('cs2') || str.includes('cơ sở 2')) {
+    return 'CS2: Cầu Giấy, Hà Nội (126 Hoàng Quốc Việt)';
+  }
+  if (str.includes('tây hồ') || str.includes('tô ngọc vân') || str.includes('cs3') || str.includes('cơ sở 3')) {
+    return 'CS3: Tây Hồ, Hà Nội (45 Tô Ngọc Vân)';
+  }
+  if (str.includes('lê chân') || str.includes('mê linh') || str.includes('cs4') || str.includes('cơ sở 4')) {
+    return 'CS4: Lê Chân, Hải Phòng (82 Mê Linh)';
+  }
+  if (str.includes('ngô quyền') || str.includes('lạch tray') || str.includes('cs5') || str.includes('cơ sở 5')) {
+    return 'CS5: Ngô Quyền, Hải Phòng (15 Lạch Tray)';
+  }
+  if (str.includes('hải phòng')) {
+    return 'Cơ sở Hải Phòng (Lê Chân / Ngô Quyền)';
+  }
+  if (str.includes('hà nội')) {
+    return 'Cơ sở Hà Nội (Ba Đình / Cầu Giấy / Tây Hồ)';
+  }
+  return branchId;
+}
+
+/**
+ * Helper format tên khóa học
+ */
+export function formatCourseName(courseId) {
+  const courseMap = {
+    kids: 'Lớp Vẽ Trẻ Em (4–15 tuổi)',
+    adults: 'Mỹ Thuật Người Lớn (16+ tuổi)',
+    '4-6': 'Lớp Mầm Sáng Tạo (4–6 tuổi)',
+    '7-10': 'Lớp Năng Khiếu Nhí (7–10 tuổi)',
+    '11-15': 'Lớp Hội Họa Thiếu Niên (11–15 tuổi)',
+    acrylic: 'Khóa Vẽ Acrylic Hiện Đại',
+    watercolor: 'Khóa Màu Nước Watercolor',
+    oil: 'Khóa Sơn Dầu Cổ Điển',
+    sketching: 'Khóa Ký Họa Phố Cổ'
+  };
+  return courseMap[courseId] || courseId || null;
+}
+
+/**
  * Gửi dữ liệu Lead về Google Sheet qua Webhook POST
- * CHỈ GỬI KHI CÓ LEAD HỢP LỆ (Số điện thoại 10 số chuẩn VN + Nhu cầu/Khóa học)
- * Tuyệt đối không gửi tin nhắn chat thông thường.
+ * ĐIỀU KIỆN KÍCH HOẠT:
+ * - Có Số điện thoại 10 chữ số chuẩn VN
+ * - Có Nhu cầu/Khóa học quan tâm
+ * - Có Cơ sở/Chi nhánh mong muốn học (Bắt buộc theo quy tắc)
+ * - Tên khách hàng (nếu có hoặc để trống)
  *
- * Payload chuẩn:
+ * Payload chuẩn định dạng JSON:
  * {
  *   "source": "art_center",
- *   "name": "<Họ tên khách hàng hoặc để trống nếu khách không nói>",
- *   "phone": "<Số điện thoại khách hàng, định dạng số chuẩn (VD: 0912345678)>",
- *   "need": "<Nhu cầu tư vấn, tên khóa học hoặc dịch vụ khách đang quan tâm>",
- *   "note": "<Ghi chú thêm về ca học mong muốn, trình độ hiện tại, độ tuổi, v.v.>"
+ *   "name": "<Họ tên khách hàng hoặc để trống>",
+ *   "phone": "<Số điện thoại 10 chữ số chuẩn>",
+ *   "branch": "<Cơ sở/Chi nhánh khách chọn học>",
+ *   "need": "<Nhu cầu tư vấn, tên khóa học khách quan tâm>",
+ *   "note": "<Ghi chú thêm về lịch học, độ tuổi, trình độ hiện tại,...>"
  * }
  *
  * @param {Object} leadData
@@ -65,7 +126,16 @@ export async function sendLeadToGoogleSheet(leadData = {}) {
       return false;
     }
 
-    // 2. Chống spam / gửi trùng lặp cùng 1 số điện thoại trong vòng 5 phút
+    // 2. Kiểm tra điều kiện bắt buộc: Cơ sở mong muốn học
+    const formattedBranch = formatBranchName(leadData.branch);
+    if (!formattedBranch) {
+      console.warn(
+        '[Google Sheet Service] Bỏ qua: Chưa có cơ sở mong muốn học theo quy định. Cần hỏi khách trước khi chốt thông tin.'
+      );
+      return false;
+    }
+
+    // 3. Chống spam / gửi trùng lặp cùng 1 số điện thoại trong vòng 5 phút
     const now = Date.now();
     const lastSentTime = recentSentLeads.get(cleanPhone);
     if (lastSentTime && now - lastSentTime < 5 * 60 * 1000) {
@@ -75,23 +145,23 @@ export async function sendLeadToGoogleSheet(leadData = {}) {
       return false;
     }
 
-    // 3. Chuẩn hóa tên khách hàng (hoặc để trống nếu khách không nói)
+    // 4. Chuẩn hóa tên khách hàng (hoặc để trống nếu khách không nói)
     const formattedName = leadData.name ? String(leadData.name).trim() : '';
 
-    // 4. Chuẩn hóa nhu cầu / khóa học
+    // 5. Chuẩn hóa nhu cầu / khóa học
     const formattedNeed =
       leadData.need ||
       leadData.courseName ||
       formatCourseName(leadData.course) ||
       'Quan tâm đăng ký học thử miễn phí (0đ)';
 
-    // 5. Chuẩn hóa ghi chú (cơ sở, ca học, lời nhắn, độ tuổi...)
+    // 6. Chuẩn hóa ghi chú thêm (lịch học, độ tuổi, trình độ hiện tại,...)
     const noteParts = [];
-    if (leadData.branch) {
-      noteParts.push(`Cơ sở: ${formatBranchName(leadData.branch)}`);
-    }
     if (leadData.preferredTime || leadData.preferredSchedule) {
-      noteParts.push(`Ca học: ${leadData.preferredTime || leadData.preferredSchedule}`);
+      noteParts.push(`Lịch học: ${leadData.preferredTime || leadData.preferredSchedule}`);
+    }
+    if (leadData.age || leadData.childAge) {
+      noteParts.push(`Độ tuổi: ${leadData.age || leadData.childAge}`);
     }
     if (leadData.source) {
       noteParts.push(`Nguồn: ${leadData.source}`);
@@ -99,23 +169,24 @@ export async function sendLeadToGoogleSheet(leadData = {}) {
     if (leadData.note) {
       noteParts.push(`Ghi chú: ${leadData.note}`);
     } else if (leadData.rawNote) {
-      noteParts.push(`Nội dung chat: "${leadData.rawNote}"`);
+      noteParts.push(`Tin nhắn: "${leadData.rawNote}"`);
     }
 
     const formattedNote = noteParts.join(' | ');
 
-    // 6. Xây dựng đúng Payload theo quy định bắt buộc
+    // 7. Xây dựng đúng Payload theo quy định bắt buộc
     const payload = {
       source: 'art_center', // BẮT BUỘC để Google Apps Script route vào tab "Art center"
       name: formattedName,
       phone: cleanPhone,
+      branch: formattedBranch,
       need: formattedNeed,
       note: formattedNote
     };
 
     console.log('[Google Sheet Service] Đang gửi Payload về Webhook:', payload);
 
-    // 7. Gửi POST request tới Webhook
+    // 8. Gửi POST request tới Webhook
     // Sử dụng 'Content-Type': 'text/plain;charset=utf-8' để tránh CORS preflight OPTIONS
     // và redirect: 'follow' để Google Apps Script trả về response trực tiếp.
     try {
@@ -155,43 +226,11 @@ export async function sendLeadToGoogleSheet(leadData = {}) {
     recentSentLeads.set(cleanPhone, now);
 
     console.log(
-      `[Google Sheet Service] ✅ Đã đẩy Lead thành công về tab Art center cho SĐT: ${cleanPhone}`
+      `[Google Sheet Service] ✅ Đã đẩy Lead thành công về tab Art center cho SĐT: ${cleanPhone} tại ${formattedBranch}`
     );
     return true;
   } catch (error) {
     console.error('[Google Sheet Service] ❌ Lỗi khi gửi Webhook tới Google Sheet:', error);
     return false;
   }
-}
-
-/**
- * Helper format tên cơ sở sang dạng thân thiện
- */
-function formatBranchName(branchId) {
-  const branchMap = {
-    'hn-badinh': 'CS1: Ba Đình, Hà Nội (Số 18 Ngõ 92 Kim Mã)',
-    'hn-caugiay': 'CS2: Cầu Giấy, Hà Nội (126 Hoàng Quốc Việt)',
-    'hn-tayho': 'CS3: Tây Hồ, Hà Nội (45 Tô Ngọc Vân)',
-    'hp-lechan': 'CS4: Lê Chân, Hải Phòng (82 Mê Linh)',
-    'hp-ngoquyen': 'CS5: Ngô Quyền, Hải Phòng (15 Lạch Tray)'
-  };
-  return branchMap[branchId] || branchId || 'Chưa chọn cơ sở';
-}
-
-/**
- * Helper format tên khóa học
- */
-function formatCourseName(courseId) {
-  const courseMap = {
-    kids: 'Lớp Vẽ Trẻ Em (4–15 tuổi)',
-    adults: 'Mỹ Thuật Người Lớn (16+ tuổi)',
-    '4-6': 'Lớp Mầm Sáng Tạo (4–6 tuổi)',
-    '7-10': 'Lớp Năng Khiếu Nhí (7–10 tuổi)',
-    '11-15': 'Lớp Hội Họa Thiếu Niên (11–15 tuổi)',
-    acrylic: 'Khóa Vẽ Acrylic Hiện Đại',
-    watercolor: 'Khóa Màu Nước Watercolor',
-    oil: 'Khóa Sơn Dầu Cổ Điển',
-    sketching: 'Khóa Ký Họa Phố Cổ'
-  };
-  return courseMap[courseId] || courseId || null;
 }

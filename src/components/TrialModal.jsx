@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Sparkles, User, Phone, BookOpen, MapPin, CheckCircle, ArrowRight, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
-import { sendLeadToGoogleSheet } from '../services/googleSheetService';
+import { sendLeadToGoogleSheet, formatBranchName } from '../services/googleSheetService';
 
 export const TrialModal = ({ isOpen, onClose, defaultAudience = 'kids' }) => {
   const [formData, setFormData] = useState({
@@ -121,7 +121,7 @@ export const TrialModal = ({ isOpen, onClose, defaultAudience = 'kids' }) => {
                 Giữ Chỗ Thành Công!
               </h4>
               <p className="text-xs sm:text-sm text-charcoal-600 mb-5 leading-relaxed">
-                Xưởng Vẽ Số Không sẽ liên hệ tới số <strong>{formData.phone}</strong> qua Zalo/Điện thoại trong vòng 15 phút để gửi lịch hẹn chi tiết.
+                Cảm ơn bạn <strong>{formData.fullName}</strong>! Tư vấn viên tại cơ sở <strong>{formatBranchName(formData.branch)}</strong> sẽ liên hệ lại với bạn sớm nhất (trong vòng 15 phút) qua Zalo/Điện thoại <strong>{formData.phone}</strong> để xác nhận lịch học thử.
               </p>
               <button
                 onClick={onClose}

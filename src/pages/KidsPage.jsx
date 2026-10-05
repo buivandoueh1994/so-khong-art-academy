@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
-import { sendLeadToGoogleSheet } from '../services/googleSheetService';
+import { sendLeadToGoogleSheet, formatBranchName } from '../services/googleSheetService';
 
 export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState('4-6');
@@ -420,7 +420,7 @@ export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
                   Đã Nhận Yêu Cầu Học Thử Cho Bé!
                 </h4>
                 <p className="text-xs sm:text-sm text-charcoal-700 max-w-md mx-auto mb-6">
-                  Cảm ơn phụ huynh <strong>{formData.parentName}</strong>. Thầy cô quản nhiệm lớp sẽ gọi điện/Zalo tới <strong>{formData.phone}</strong> trong 15 phút để sắp xếp ca học và gửi định vị phòng học cho gia đình.
+                  Cảm ơn phụ huynh <strong>{formData.parentName}</strong>! Tư vấn viên tại cơ sở <strong>{formatBranchName(formData.branch)}</strong> sẽ liên hệ lại với phụ huynh sớm nhất (trong vòng 15 phút) qua số điện thoại/Zalo <strong>{formData.phone}</strong> để sắp xếp ca học và gửi định vị phòng học cho gia đình.
                 </p>
                 <button
                   onClick={() => setIsSubmitted(false)}

@@ -3,7 +3,8 @@ import {
   MessageCircle, X, Send, Sparkles, RefreshCw, Phone, 
   ChevronUp, CheckCircle2, ShieldCheck, ArrowRight
 } from 'lucide-react';
-import { generateBotResponse, saveLead } from '../services/chatbotService';
+import { generateBotResponse, saveLead, getShortBranchName } from '../services/chatbotService';
+import { formatBranchName } from '../services/googleSheetService';
 import { BrandStamp } from './Doodles';
 import confetti from 'canvas-confetti';
 
@@ -115,7 +116,8 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
         id: `msg-bot-${Date.now()}`,
         sender: 'bot',
         text: botReply.text,
-        showLeadCard: botReply.showLeadCard && !leadFormSubmitted
+        showLeadCard: botReply.showLeadCard && !leadFormSubmitted,
+        branchOptions: botReply.branchOptions || null
       };
 
       setMessages(prev => [...prev, botMsg]);
@@ -153,12 +155,7 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
     const confirmMsg = {
       id: `msg-bot-confirm-${Date.now()}`,
       sender: 'bot',
-      text: `Dạ em đã lưu thông tin của **${leadFormData.name || 'mình'}** (${leadFormData.phone}) rồi ạ! 🎉\n\nEm đã đăng ký giữ **01 suất học thử miễn phí (0đ)** tại **${
-        leadFormData.branch === 'hn-badinh' ? 'CS Ba Đình, HN' :
-        leadFormData.branch === 'hn-caugiay' ? 'CS Cầu Giấy, HN' :
-        leadFormData.branch === 'hn-tayho' ? 'CS Tây Hồ, HN' :
-        leadFormData.branch === 'hp-lechan' ? 'CS Lê Chân, Hải Phòng' : 'CS Ngô Quyền, Hải Phòng'
-      }**.\n\nThầy cô phụ trách xưởng sẽ liên hệ qua Zalo/Điện thoại trong vòng **15 phút** để gửi thời khóa biểu chi tiết cho mình nhé ạ!`
+      text: `Dạ em cảm ơn ${leadFormData.name ? 'anh/chị **' + leadFormData.name + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã lưu thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** của mình tại **${formatBranchName(leadFormData.branch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(leadFormData.branch)} sẽ liên hệ lại với mình sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${leadFormData.phone}** để gửi thời khóa biểu và chuẩn bị họa cụ đón tiếp mình chu đáo nhất nhé ạ! 🎨`
     };
 
     setMessages(prev => [...prev, confirmMsg]);
@@ -352,6 +349,27 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
                   }`}
                 >
                   {renderFormattedText(msg.text)}
+
+                  {/* Quick Branch Option Buttons when chatbot asks customer for branch */}
+                  {msg.branchOptions && !leadFormSubmitted && (
+                    <div className="mt-2.5 pt-2 border-t border-amber-200/80">
+                      <p className="text-[11px] font-bold text-amber-950 mb-1.5 flex items-center gap-1">
+                        <span>📍</span> Bấm chọn nhanh cơ sở bạn muốn học:
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {msg.branchOptions.map(opt => (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => handleSendMessage(opt.name)}
+                            className="text-[11px] bg-amber-50 hover:bg-amber-200 text-charcoal-900 border border-amber-300 font-semibold px-2.5 py-1 rounded-lg transition-all shadow-2xs hover:scale-105 active:scale-95 text-left"
+                          >
+                            {opt.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* In-chat Mini Lead Form */}
