@@ -453,8 +453,9 @@ export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
                     >
                       <option value="hn-badinh">CS1: Ba Đình - Hà Nội</option>
                       <option value="hn-caugiay">CS2: Cầu Giấy - Hà Nội</option>
-                      <option value="hcm-q3">CS3: Quận 3 - TP.HCM</option>
-                      <option value="hcm-binhthanh">CS4: Bình Thạnh - TP.HCM</option>
+                      <option value="hn-tayho">CS3: Tây Hồ - Hà Nội</option>
+                      <option value="hcm-q3">CS4: Quận 3 - TP.HCM</option>
+                      <option value="hcm-binhthanh">CS5: Bình Thạnh - TP.HCM</option>
                     </select>
                   </div>
 

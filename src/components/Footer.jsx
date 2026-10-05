@@ -1,21 +1,22 @@
 import React from 'react';
 import { BrandStamp } from './Doodles';
-import { MapPin, Phone, Mail, Clock, Heart, Sparkles } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Heart, Sparkles, Building2 } from 'lucide-react';
 
 export const Footer = ({ onOpenTrialModal }) => {
   const branches = [
     {
-      city: 'Hà Nội',
+      city: 'Hà Nội (03 Cơ Sở)',
       items: [
-        { name: 'Cơ sở Ba Đình', address: 'Số 18, Ngõ 92 Kim Mã, Ba Đình, Hà Nội' },
-        { name: 'Cơ sở Cầu Giấy', address: 'Tầng 3, 126 Hoàng Quốc Việt, Cầu Giấy, Hà Nội' },
+        { name: 'Cơ sở 1 (Ba Đình)', address: 'Số 18, Ngõ 92 Kim Mã, Ba Đình, Hà Nội' },
+        { name: 'Cơ sở 2 (Cầu Giấy)', address: 'Tầng 3, 126 Hoàng Quốc Việt, Cầu Giấy, Hà Nội' },
+        { name: 'Cơ sở 3 (Tây Hồ)', address: 'Số 45 Tô Ngọc Vân, Quảng An, Tây Hồ, Hà Nội' },
       ]
     },
     {
-      city: 'TP. Hồ Chí Minh',
+      city: 'TP. Hồ Chí Minh (02 Cơ Sở)',
       items: [
-        { name: 'Cơ sở Quận 3', address: '215/8 Điện Biên Phủ, Phường Võ Thị Sáu, Quận 3, TP.HCM' },
-        { name: 'Cơ sở Bình Thạnh', address: '48/2 Lam Sơn, Phường 6, Bình Thạnh, TP.HCM' },
+        { name: 'Cơ sở 4 (Quận 3)', address: '215/8 Điện Biên Phủ, Phường Võ Thị Sáu, Quận 3, TP.HCM' },
+        { name: 'Cơ sở 5 (Bình Thạnh)', address: '48/2 Lam Sơn, Phường 6, Bình Thạnh, TP.HCM' },
       ]
     }
   ];
@@ -35,7 +36,7 @@ export const Footer = ({ onOpenTrialModal }) => {
                 Bắt đầu hành trình sáng tạo của bạn từ số 0
               </h3>
               <p className="text-xs sm:text-sm text-stone-400">
-                Nhận ngay 01 buổi học thử miễn phí trị giá 350.000đ dành cho học viên mới.
+                Nhận ngay 01 buổi học thử miễn phí trị giá 350.000đ dành cho học viên mới tại 5 cơ sở HN &amp; TP.HCM.
               </p>
             </div>
           </div>
@@ -60,15 +61,14 @@ export const Footer = ({ onOpenTrialModal }) => {
                   SỐ KHÔNG
                 </span>
                 <span className="text-[10px] font-semibold text-amber-300 tracking-wider uppercase">
-                  Zero Art Studio
+                  Zero Art Studio • 5 Cơ Sở
                 </span>
               </div>
             </div>
 
             <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
               Hệ thống không gian nghệ thuật và đào tạo mỹ thuật sáng tạo cho mọi lứa tuổi. 
-              Chúng tôi tin rằng mọi người sinh ra đều có năng khiếu nghệ thuật tiềm ẩn, 
-              chỉ cần một phương pháp khơi mở đúng đắn.
+              Hơn 12.500+ học viên đã tự tin sáng tạo và hoàn thiện tác phẩm của riêng mình.
             </p>
 
             <div className="pt-2 text-xs space-y-2 text-stone-300">
@@ -89,8 +89,9 @@ export const Footer = ({ onOpenTrialModal }) => {
 
           {/* Branches (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
-            <h4 className="font-heading font-bold text-sm text-white uppercase tracking-wider text-amber-300">
-              Hệ thống xưởng vẽ
+            <h4 className="font-heading font-bold text-sm text-white uppercase tracking-wider text-amber-300 flex items-center gap-2">
+              <Building2 className="w-4 h-4" />
+              Hệ thống 05 xưởng vẽ hiện đại
             </h4>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -120,28 +121,28 @@ export const Footer = ({ onOpenTrialModal }) => {
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
               <li>
-                <a href="#lop-tre-em" className="hover:text-amber-300 transition-colors">
+                <a href="#/kids" className="hover:text-amber-300 transition-colors">
                   • Lớp Vẽ Sáng Tạo Trẻ Em (4-15 tuổi)
                 </a>
               </li>
               <li>
-                <a href="#lop-nguoi-lon" className="hover:text-amber-300 transition-colors">
+                <a href="#/adults" className="hover:text-amber-300 transition-colors">
                   • Mỹ Thuật Người Lớn Thư Giãn (16+)
                 </a>
               </li>
               <li>
-                <a href="#lo-trinh" className="hover:text-amber-300 transition-colors">
+                <a href="#/adults" className="hover:text-amber-300 transition-colors">
                   • Khóa Màu Nước Cổ Điển
                 </a>
               </li>
               <li>
-                <a href="#lo-trinh" className="hover:text-amber-300 transition-colors">
-                  • Khóa Acrylic & Sơn Dầu Phong Cảnh
+                <a href="#/adults" className="hover:text-amber-300 transition-colors">
+                  • Khóa Acrylic &amp; Sơn Dầu Phong Cảnh
                 </a>
               </li>
               <li>
-                <a href="#lo-trinh" className="hover:text-amber-300 transition-colors">
-                  • Khóa Ký Họa Bút Sắt & Phác Thảo
+                <a href="#/adults" className="hover:text-amber-300 transition-colors">
+                  • Khóa Ký Họa Bút Sắt &amp; Phác Thảo
                 </a>
               </li>
             </ul>
@@ -151,9 +152,9 @@ export const Footer = ({ onOpenTrialModal }) => {
 
         {/* Bottom copyright */}
         <div className="pt-8 border-t border-stone-800 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
-          <p>© {new Date().getFullYear()} SỐ KHÔNG (Zero Art Studio). Bản quyền thuộc về Xưởng Vẽ Số Không.</p>
+          <p>© {new Date().getFullYear()} SỐ KHÔNG (Zero Art Studio). Hệ thống 05 xưởng vẽ sáng tạo toàn quốc.</p>
           <p className="flex items-center gap-1">
-            <span>Thiết kế & Redesign với tình yêu nghệ thuật</span>
+            <span>Thiết kế &amp; Redesign với tình yêu nghệ thuật</span>
             <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
           </p>
         </div>
