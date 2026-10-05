@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { PaletteDoodle, SunDoodle, BrushDoodle, SparkleDoodle, PaintSplashBg } from './Doodles';
-import { CheckCircle2, ArrowRight, Sparkles, Users, Award, Heart } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Sparkles, Heart } from 'lucide-react';
 
-export const HeroSplit = ({ onSelectAudience }) => {
+export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }) => {
   // Mobile tab selector so users on small screens can switch or view both easily
   const [activeMobileTab, setActiveMobileTab] = useState('both'); // 'kids' | 'adults' | 'both'
 
@@ -163,7 +163,7 @@ export const HeroSplit = ({ onSelectAudience }) => {
             </div>
 
             {/* Action CTA Button */}
-            <div className="mt-auto pt-2">
+            <div className="mt-auto pt-2 space-y-2">
               <button
                 onClick={handleRegisterKids}
                 className="w-full py-3.5 sm:py-4 px-6 bg-brand-400 hover:bg-brand-300 text-charcoal-900 font-heading font-black text-sm sm:text-base rounded-2xl border-2 border-charcoal-900 shadow-[4px_4px_0px_0px_#18181B] hover:shadow-[5px_5px_0px_0px_#18181B] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center"
@@ -171,10 +171,20 @@ export const HeroSplit = ({ onSelectAudience }) => {
                 <span>Đăng ký học thử cho bé (Miễn phí)</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-charcoal-900" />
               </button>
-              <p className="text-center text-[11px] text-charcoal-500 mt-2 flex items-center justify-center gap-1">
-                <Heart className="w-3 h-3 text-red-500 fill-red-500" />
-                <span>Hoàn toàn miễn phí • Đã bao gồm màu vẽ và họa cụ</span>
-              </p>
+
+              {/* Dedicated Page Link */}
+              <div className="flex items-center justify-between px-1 pt-1 text-xs">
+                <button
+                  onClick={onNavigateKids}
+                  className="font-bold text-amber-800 hover:text-amber-950 underline decoration-amber-400 decoration-2 underline-offset-4 flex items-center gap-1"
+                >
+                  <span>Xem chi tiết 3 nhóm tuổi & thời khóa biểu bé</span>
+                  <span>→</span>
+                </button>
+                <span className="text-[11px] text-charcoal-500 hidden sm:inline flex items-center gap-1">
+                  <Heart className="w-3 h-3 text-red-500 fill-red-500" /> Miễn phí 100%
+                </span>
+              </div>
             </div>
           </div>
 
@@ -276,7 +286,7 @@ export const HeroSplit = ({ onSelectAudience }) => {
             </div>
 
             {/* Action CTA Button */}
-            <div className="mt-auto pt-2">
+            <div className="mt-auto pt-2 space-y-2">
               <button
                 onClick={handleRegisterAdults}
                 className="w-full py-3.5 sm:py-4 px-6 bg-charcoal-900 hover:bg-charcoal-800 text-amber-300 font-heading font-black text-sm sm:text-base rounded-2xl border-2 border-charcoal-900 shadow-[4px_4px_0px_0px_#FACC15] hover:shadow-[5px_5px_0px_0px_#FACC15] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center"
@@ -284,9 +294,20 @@ export const HeroSplit = ({ onSelectAudience }) => {
                 <span>Đăng ký buổi trải nghiệm ngay</span>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
               </button>
-              <p className="text-center text-[11px] text-charcoal-500 mt-2 flex items-center justify-center gap-1">
-                <span>Trải nghiệm 90 phút vẽ tranh thực tế • Miễn phí 100%</span>
-              </p>
+
+              {/* Dedicated Page Link */}
+              <div className="flex items-center justify-between px-1 pt-1 text-xs">
+                <button
+                  onClick={onNavigateAdults}
+                  className="font-bold text-charcoal-900 hover:text-amber-800 underline decoration-amber-500 decoration-2 underline-offset-4 flex items-center gap-1"
+                >
+                  <span>Xem chi tiết 4 chất liệu & ca tối người lớn</span>
+                  <span>→</span>
+                </button>
+                <span className="text-[11px] text-charcoal-500 hidden sm:inline">
+                  Trải nghiệm 90 phút • 0đ
+                </span>
+              </div>
             </div>
           </div>
 
