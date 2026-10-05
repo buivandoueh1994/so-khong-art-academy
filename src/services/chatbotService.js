@@ -225,8 +225,31 @@ export function isLeadCardRelevant(userMessage, aiReply = '') {
 }
 
 /**
- * Smart Consultative Dialog Engine
- * Vừa trả lời giải đáp thắc mắc, vừa khéo léo dẫn dắt xin Tên + SĐT để giữ chỗ học thử 0đ
+ * Xây dựng lịch sử đối thoại gửi tới Gemini AI
+ */
+export function buildGeminiHistory(conversationHistory = [], currentMessage = '') {
+  const history = (conversationHistory || [])
+    .filter(m => m && (m.text || m.content))
+    .slice(-10)
+    .map(m => ({
+      role: (m.sender === 'user' || m.role === 'user') ? 'user' : 'model',
+      content: m.text || m.content
+    }));
+
+  if (
+    history.length === 0 ||
+    history[history.length - 1].role !== 'user' ||
+    history[history.length - 1].content !== currentMessage
+  ) {
+    history.push({ role: 'user', content: currentMessage });
+  }
+
+  return history;
+}
+
+/**
+ * Smart Consultative Dialog Engine powered by Real Google Gemini AI
+ * Tự động phân tích hội thoại, giải đáp thấu hiểu và khéo léo chốt lead về Google Sheet & Telegram
  */
 export async function generateBotResponse(userMessage, conversationHistory = []) {
   const text = userMessage.toLowerCase().trim();
@@ -249,8 +272,18 @@ export async function generateBotResponse(userMessage, conversationHistory = [])
     saveLead(finalLead);
     setPendingLead(null); // Đã chốt lead thành công
 
+    // Gọi Real Gemini AI phản hồi tự nhiên theo ngữ cảnh
+    let aiReply = null;
+    try {
+      aiReply = await askGemini(buildGeminiHistory(conversationHistory, userMessage));
+    } catch (e) {
+      console.warn('[Gemini AI] Error generating branch confirmation:', e);
+    }
+
+    const fallbackConfirmation = `Dạ em cảm ơn ${finalLead.name ? 'anh/chị **' + finalLead.name + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã lưu thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** của mình tại **${formatBranchName(finalBranch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(finalBranch)} sẽ liên hệ lại với ${finalLead.name ? finalLead.name : 'mình'} sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${finalLead.phone}** để gửi thời khóa biểu và chuẩn bị họa cụ đón tiếp mình chu đáo nhất nhé ạ! 🎨`;
+
     return {
-      text: `Dạ em cảm ơn ${finalLead.name ? 'anh/chị **' + finalLead.name + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã lưu thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** của mình tại **${formatBranchName(finalBranch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(finalBranch)} sẽ liên hệ lại với ${finalLead.name ? finalLead.name : 'mình'} sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${finalLead.phone}** để gửi thời khóa biểu và chuẩn bị họa cụ đón tiếp mình chu đáo nhất nhé ạ! 🎨`,
+      text: (aiReply && aiReply.trim()) || fallbackConfirmation,
       showLeadCard: false,
       leadCaptured: true
     };
@@ -273,8 +306,17 @@ export async function generateBotResponse(userMessage, conversationHistory = [])
       });
       setPendingLead(null);
 
+      let aiReply = null;
+      try {
+        aiReply = await askGemini(buildGeminiHistory(conversationHistory, userMessage));
+      } catch (e) {
+        console.warn('[Gemini AI] Error generating lead confirmation:', e);
+      }
+
+      const fallbackConfirmation = `Dạ em cảm ơn ${intent.detectedName ? 'anh/chị **' + intent.detectedName + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã chuyển thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** lớp **${intent.need}** của mình tới **${formatBranchName(branch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(branch)} sẽ liên hệ lại với ${intent.detectedName ? intent.detectedName : 'mình'} sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${phone}** để xác nhận lịch học và hoàn tất xếp lớp nhé ạ! 🎨`;
+
       return {
-        text: `Dạ em cảm ơn ${intent.detectedName ? 'anh/chị **' + intent.detectedName + '**' : 'mình'} rất nhiều ạ! 🎉\n\nEm đã chuyển thông tin đăng ký giữ **01 suất học thử miễn phí (0đ)** lớp **${intent.need}** của mình tới **${formatBranchName(branch)}**.\n\n📞 **Tư vấn viên tại cơ sở ${getShortBranchName(branch)} sẽ liên hệ lại với ${intent.detectedName ? intent.detectedName : 'mình'} sớm nhất** (trong vòng 15 phút) qua số điện thoại/Zalo **${phone}** để xác nhận lịch học và hoàn tất xếp lớp nhé ạ! 🎨`,
+        text: (aiReply && aiReply.trim()) || fallbackConfirmation,
         showLeadCard: false,
         leadCaptured: true
       };
@@ -288,8 +330,17 @@ export async function generateBotResponse(userMessage, conversationHistory = [])
       rawNote: userMessage
     });
 
+    let aiReply = null;
+    try {
+      aiReply = await askGemini(buildGeminiHistory(conversationHistory, userMessage));
+    } catch (e) {
+      console.warn('[Gemini AI] Error generating ask branch response:', e);
+    }
+
+    const fallbackAskBranch = `Dạ em đã nhận được số điện thoại **${phone}** của mình rồi ạ! 🎉\n\nĐể xếp lớp và giữ suất **học thử miễn phí (0đ)** thuận tiện nhất cho mình, **anh/chị muốn học tại cơ sở nào** của xưởng ạ?\n\n📍 **Khu vực Hà Nội (03 cơ sở):**\n• **CS1 Ba Đình:** Số 18, Ngõ 92 Kim Mã\n• **CS2 Cầu Giấy:** Tầng 3, 126 Hoàng Quốc Việt\n• **CS3 Tây Hồ:** Số 45 Tô Ngọc Vân, Quảng An\n\n📍 **Khu vực Hải Phòng (02 cơ sở):**\n• **CS4 Lê Chân:** Số 82 Mê Linh, An Biên\n• **CS5 Ngô Quyền:** Số 15 Lạch Tray\n\n*(Anh/chị có thể bấm chọn nhanh các nút cơ sở bên dưới hoặc nhắn tên khu vực tiện đi lại nhất nhé!)*`;
+
     return {
-      text: `Dạ em đã nhận được số điện thoại **${phone}** của mình rồi ạ! 🎉\n\nĐể xếp lớp và giữ suất **học thử miễn phí (0đ)** thuận tiện nhất cho mình, **anh/chị muốn học tại cơ sở nào** của xưởng ạ?\n\n📍 **Khu vực Hà Nội (03 cơ sở):**\n• **CS1 Ba Đình:** Số 18, Ngõ 92 Kim Mã\n• **CS2 Cầu Giấy:** Tầng 3, 126 Hoàng Quốc Việt\n• **CS3 Tây Hồ:** Số 45 Tô Ngọc Vân, Quảng An\n\n📍 **Khu vực Hải Phòng (02 cơ sở):**\n• **CS4 Lê Chân:** Số 82 Mê Linh, An Biên\n• **CS5 Ngô Quyền:** Số 15 Lạch Tray\n\n*(Anh/chị có thể bấm chọn nhanh các nút cơ sở bên dưới hoặc nhắn tên khu vực tiện đi lại nhất nhé!)*`,
+      text: (aiReply && aiReply.trim()) || fallbackAskBranch,
       showLeadCard: false,
       leadCaptured: false,
       branchOptions: [
@@ -302,24 +353,9 @@ export async function generateBotResponse(userMessage, conversationHistory = [])
     };
   }
 
-  // 3. TƯ VẤN & TRÒ CHUYỆN BẰNG GOOGLE GEMINI AI
+  // 3. TƯ VẤN & TRÒ CHUYỆN BẰNG THẲNG GOOGLE GEMINI AI
   try {
-    const geminiHistory = (conversationHistory || [])
-      .filter(m => m && (m.text || m.content))
-      .slice(-10)
-      .map(m => ({
-        role: (m.sender === 'user' || m.role === 'user') ? 'user' : 'model',
-        content: m.text || m.content
-      }));
-
-    if (
-      geminiHistory.length === 0 ||
-      geminiHistory[geminiHistory.length - 1].role !== 'user' ||
-      geminiHistory[geminiHistory.length - 1].content !== userMessage
-    ) {
-      geminiHistory.push({ role: 'user', content: userMessage });
-    }
-
+    const geminiHistory = buildGeminiHistory(conversationHistory, userMessage);
     const aiReply = await askGemini(geminiHistory);
     if (aiReply && aiReply.trim()) {
       return {
