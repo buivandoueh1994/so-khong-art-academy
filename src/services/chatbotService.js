@@ -35,7 +35,9 @@ export function extractPhoneNumber(text) {
   return match ? match[0] : null;
 }
 
-// Lưu trữ lead vào localStorage (chuẩn bị sẵn để hook vào Telegram / Google Sheet khi user yêu cầu sau)
+import { sendLeadToTelegram } from './telegramService';
+
+// Lưu trữ lead vào localStorage và gửi thông báo về Telegram
 export function saveLead(leadData) {
   try {
     const existing = JSON.parse(localStorage.getItem('so_khong_leads') || '[]');
@@ -43,15 +45,15 @@ export function saveLead(leadData) {
       id: `lead_${Date.now()}`,
       createdAt: new Date().toISOString(),
       ...leadData,
-      source: 'chatbot'
+      source: leadData.source || 'Chatbot Tư Vấn'
     };
     existing.unshift(newLead);
     localStorage.setItem('so_khong_leads', JSON.stringify(existing));
     
-    // Placeholder: Khi nào cần gửi Telegram hay Google Sheet, chỉ cần uncomment và truyền URL
-    // sendLeadToTelegram(newLead);
-    // sendLeadToGoogleSheet(newLead);
-    console.log('[SỐ KHÔNG Lead Captured]:', newLead);
+    // Gửi thông báo tức thì về Telegram khi có Lead hợp lệ
+    sendLeadToTelegram(newLead);
+    
+    console.log('[SỐ KHÔNG Lead Captured & Sent to Telegram]:', newLead);
     return newLead;
   } catch (err) {
     console.error('Error saving lead:', err);

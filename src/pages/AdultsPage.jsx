@@ -5,6 +5,7 @@ import {
   Heart, ArrowRight, ShieldCheck, Palette, Frame, Star, Phone
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { sendLeadToTelegram } from '../services/telegramService';
 
 export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
   const [selectedMedium, setSelectedMedium] = useState('acrylic');
@@ -88,6 +89,16 @@ export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
       setErrors(newErrors);
       return;
     }
+
+    // Bắn lead về Telegram
+    sendLeadToTelegram({
+      name: formData.fullName,
+      phone: formData.phone,
+      course: formData.medium,
+      branch: formData.branch,
+      preferredTime: formData.preferredTime,
+      source: 'Trang Mỹ Thuật Người Lớn (Dedicated Page)'
+    });
 
     setIsSubmitted(true);
     try {

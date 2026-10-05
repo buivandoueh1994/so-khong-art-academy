@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Phone, User, BookOpen, MapPin, ShieldCheck, CheckCircle, Clock, Gift, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { sendLeadToTelegram } from '../services/telegramService';
 
 export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess }) => {
   const [formData, setFormData] = useState({
@@ -59,6 +60,16 @@ export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess })
     }
 
     setIsSubmitting(true);
+
+    // Gửi thông báo Lead về Telegram
+    sendLeadToTelegram({
+      name: formData.fullName,
+      phone: formData.phone,
+      course: formData.course,
+      branch: formData.branch,
+      preferredTime: formData.preferredTime,
+      source: 'Form Đăng Ký Chính (Trang chủ)'
+    });
 
     // Simulate API call
     setTimeout(() => {

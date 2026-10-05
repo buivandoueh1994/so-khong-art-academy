@@ -5,6 +5,7 @@ import {
   Heart, ArrowRight, BookOpen, Star, HelpCircle, Trophy, Phone
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { sendLeadToTelegram } from '../services/telegramService';
 
 export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState('4-6');
@@ -84,6 +85,16 @@ export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
       setErrors(newErrors);
       return;
     }
+
+    // Bắn lead về Telegram
+    sendLeadToTelegram({
+      name: formData.parentName,
+      phone: formData.phone,
+      course: formData.childAge,
+      branch: formData.branch,
+      preferredTime: formData.preferredSchedule,
+      source: 'Trang Lớp Vẽ Trẻ Em (Dedicated Page)'
+    });
 
     setIsSubmitted(true);
     try {

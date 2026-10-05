@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, User, Phone, BookOpen, MapPin, CheckCircle, ArrowRight, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { sendLeadToTelegram } from '../services/telegramService';
 
 export const TrialModal = ({ isOpen, onClose, defaultAudience = 'kids' }) => {
   const [formData, setFormData] = useState({
@@ -48,6 +49,15 @@ export const TrialModal = ({ isOpen, onClose, defaultAudience = 'kids' }) => {
     }
 
     setIsSubmitting(true);
+
+    // Bắn lead về Telegram
+    sendLeadToTelegram({
+      name: formData.fullName,
+      phone: formData.phone,
+      course: formData.course,
+      branch: formData.branch,
+      source: 'Popup Học Thử Nhanh (Modal)'
+    });
 
     setTimeout(() => {
       setIsSubmitting(false);
