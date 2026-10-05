@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
+import { sendLeadToGoogleSheet } from '../services/googleSheetService';
 
 export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState('4-6');
@@ -86,15 +87,31 @@ export const KidsPage = ({ onOpenTrialModal, onNavigateHome }) => {
       return;
     }
 
-    // Bắn lead về Telegram
-    sendLeadToTelegram({
+    // Bắn lead về Telegram và Google Sheet Webhook
+    const ageMap = {
+      '4-6': 'Lớp Mầm Sáng Tạo (4–6 tuổi)',
+      '7-10': 'Lớp Năng Khiếu Nhí (7–10 tuổi)',
+      '11-15': 'Lớp Hội Họa Thiếu Niên (11–15 tuổi)'
+    };
+
+    const scheduleMap = {
+      'weekend': 'Cuối tuần (Thứ 7 & Chủ Nhật)',
+      'weekday-afternoon': 'Chiều trong tuần (17h00 - 18h30)'
+    };
+
+    const leadPayload = {
       name: formData.parentName,
       phone: formData.phone,
       course: formData.childAge,
+      need: `Lớp Vẽ Trẻ Em - ${ageMap[formData.childAge] || formData.childAge}`,
       branch: formData.branch,
-      preferredTime: formData.preferredSchedule,
+      preferredTime: scheduleMap[formData.preferredSchedule] || formData.preferredSchedule,
+      note: formData.note,
       source: 'Trang Lớp Vẽ Trẻ Em (Dedicated Page)'
-    });
+    };
+
+    sendLeadToTelegram(leadPayload);
+    sendLeadToGoogleSheet(leadPayload);
 
     setIsSubmitted(true);
     try {

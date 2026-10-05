@@ -35,9 +35,84 @@ export function extractPhoneNumber(text) {
   return match ? match[0] : null;
 }
 
-import { sendLeadToTelegram } from './telegramService';
+import { sendLeadToTelegram } from './telegramService.js';
+import { sendLeadToGoogleSheet } from './googleSheetService.js';
 
-// Lưu trữ lead vào localStorage và gửi thông báo về Telegram
+/**
+ * Phân tích ngữ cảnh đoạn chat để trích xuất Nhu cầu, Tên và Cơ sở nếu khách đề cập
+ */
+export function analyzeCustomerIntent(conversationHistory = [], currentMessage = '') {
+  const allText = [
+    ...conversationHistory.map(m => m.text || ''),
+    currentMessage
+  ].join(' ').toLowerCase();
+
+  let need = 'Quan tâm đăng ký học thử 0đ (Tư vấn qua Chatbot AI)';
+  let detectedName = '';
+  let branch = '';
+
+  // 1. Nhận diện họ tên khách hàng
+  const namePatterns = [
+    /(?:tên\s*(?:em|mình|tôi|của\s*mình)?\s*(?:là)?)\s*[:]?\s*([A-Za-zÀ-ỹ\s]+)/i,
+    /(?:mình\s*(?:tên\s*là|tên|là))\s*([A-Za-zÀ-ỹ\s]+)/i,
+    /(?:em\s*(?:tên\s*là|tên|là))\s*([A-Za-zÀ-ỹ\s]+)/i,
+    /(?:tôi\s*(?:tên\s*là|tên|là))\s*([A-Za-zÀ-ỹ\s]+)/i,
+    /(?:chị|anh|cô|bác)\s+([A-Za-zÀ-ỹ]+)/i
+  ];
+  for (const pattern of namePatterns) {
+    const match = currentMessage.match(pattern);
+    if (match && match[1]) {
+      const raw = match[1].trim();
+      const stopWords = ['là', 'ở', 'tại', 'nhé', 'nha', 'ạ', 'sđt', 'phone', 'zalo', 'qua', 'cho', 'với', 'nhá', 'muốn', 'cần', 'hỏi', 'có', 'gửi', 'lấy', 'số'];
+      const words = raw.split(/\s+/);
+      const cleanWords = [];
+      for (const w of words) {
+        if (stopWords.includes(w.toLowerCase()) || /\d/.test(w)) break;
+        cleanWords.push(w);
+      }
+      if (cleanWords.length > 0 && cleanWords.length <= 4) {
+        detectedName = cleanWords.join(' ');
+        break;
+      }
+    }
+  }
+
+  // 2. Nhận diện khóa học / nhu cầu
+  if (allText.includes('bé') || allText.includes('trẻ em') || allText.includes('con') || allText.includes('cháu') || allText.includes('mầm')) {
+    if (allText.includes('4') || allText.includes('5') || allText.includes('6')) {
+      need = 'Lớp Vẽ Trẻ Em - Mầm Sáng Tạo (4–6 tuổi)';
+    } else if (allText.includes('7') || allText.includes('8') || allText.includes('9') || allText.includes('10')) {
+      need = 'Lớp Vẽ Trẻ Em - Năng Khiếu Nhí (7–10 tuổi)';
+    } else if (allText.includes('11') || allText.includes('12') || allText.includes('13') || allText.includes('14') || allText.includes('15')) {
+      need = 'Lớp Vẽ Trẻ Em - Hội Họa Thiếu Niên (11–15 tuổi)';
+    } else {
+      need = 'Lớp Vẽ Trẻ Em (4–15 tuổi)';
+    }
+  } else if (allText.includes('người lớn') || allText.includes('acrylic') || allText.includes('màu nước') || allText.includes('sơn dầu') || allText.includes('ký họa') || allText.includes('chưa biết vẽ')) {
+    if (allText.includes('màu nước') || allText.includes('watercolor')) {
+      need = 'Mỹ Thuật Người Lớn - Màu Nước Watercolor';
+    } else if (allText.includes('sơn dầu') || allText.includes('oil')) {
+      need = 'Mỹ Thuật Người Lớn - Sơn Dầu Cổ Điển';
+    } else if (allText.includes('ký họa')) {
+      need = 'Mỹ Thuật Người Lớn - Ký Họa Phố Cổ';
+    } else {
+      need = 'Mỹ Thuật Người Lớn (16+ tuổi) - Acrylic / Tự do';
+    }
+  }
+
+  // 3. Nhận diện cơ sở quan tâm
+  if (allText.includes('ba đình') || allText.includes('kim mã')) branch = 'hn-badinh';
+  else if (allText.includes('cầu giấy') || allText.includes('hoàng quốc việt')) branch = 'hn-caugiay';
+  else if (allText.includes('tây hồ') || allText.includes('tô ngọc vân')) branch = 'hn-tayho';
+  else if (allText.includes('lê chân') || allText.includes('mê linh')) branch = 'hp-lechan';
+  else if (allText.includes('ngô quyền') || allText.includes('lạch tray')) branch = 'hp-ngoquyen';
+  else if (allText.includes('hải phòng')) branch = 'hp-lechan';
+  else if (allText.includes('hà nội')) branch = 'hn-badinh';
+
+  return { detectedName, need, branch };
+}
+
+// Lưu trữ lead vào localStorage và gửi đồng thời về Telegram + Google Sheet
 export function saveLead(leadData) {
   try {
     const existing = JSON.parse(localStorage.getItem('so_khong_leads') || '[]');
@@ -50,10 +125,11 @@ export function saveLead(leadData) {
     existing.unshift(newLead);
     localStorage.setItem('so_khong_leads', JSON.stringify(existing));
     
-    // Gửi thông báo tức thì về Telegram khi có Lead hợp lệ
+    // Gửi đồng thời về Telegram và Google Sheet Webhook khi có Lead hợp lệ
     sendLeadToTelegram(newLead);
+    sendLeadToGoogleSheet(newLead);
     
-    console.log('[SỐ KHÔNG Lead Captured & Sent to Telegram]:', newLead);
+    console.log('[SỐ KHÔNG Lead Captured & Dispatched]:', newLead);
     return newLead;
   } catch (err) {
     console.error('Error saving lead:', err);
@@ -71,7 +147,15 @@ export function generateBotResponse(userMessage, conversationHistory = []) {
 
   // 1. Nếu khách hàng vừa gửi số điện thoại trong tin nhắn
   if (phone) {
-    saveLead({ phone, rawNote: userMessage });
+    const intent = analyzeCustomerIntent(conversationHistory, userMessage);
+    saveLead({
+      name: intent.detectedName,
+      phone,
+      need: intent.need,
+      branch: intent.branch,
+      rawNote: userMessage,
+      source: 'Chatbot Tư Vấn AI'
+    });
     return {
       text: `Dạ em đã nhận được số điện thoại **${phone}** của mình rồi ạ! 🎉\n\nBộ phận quản nhiệm lớp tại Xưởng Vẽ Số Không sẽ liên hệ qua Zalo/Điện thoại trong vòng **15 phút** để gửi thời khóa biểu chi tiết và xác nhận suất **học thử miễn phí (0đ)** cho mình.\n\nCho em hỏi thêm là mình đang đăng ký cho **bé** hay **người lớn** và mình tiện học ở cơ sở nào tại **Hà Nội** hay **Hải Phòng** nhất ạ?`,
       showLeadCard: false,

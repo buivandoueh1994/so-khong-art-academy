@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Sparkles, User, Phone, BookOpen, MapPin, CheckCircle, ArrowRight, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
+import { sendLeadToGoogleSheet } from '../services/googleSheetService';
 
 export const TrialModal = ({ isOpen, onClose, defaultAudience = 'kids' }) => {
   const [formData, setFormData] = useState({
@@ -50,14 +51,22 @@ export const TrialModal = ({ isOpen, onClose, defaultAudience = 'kids' }) => {
 
     setIsSubmitting(true);
 
-    // Bắn lead về Telegram
-    sendLeadToTelegram({
+    const courseName = formData.course === 'kids'
+      ? 'Lớp Vẽ Trẻ Em (4–15 tuổi)'
+      : 'Mỹ Thuật Người Lớn (16+ tuổi)';
+
+    const leadPayload = {
       name: formData.fullName,
       phone: formData.phone,
       course: formData.course,
+      need: courseName,
       branch: formData.branch,
       source: 'Popup Học Thử Nhanh (Modal)'
-    });
+    };
+
+    // Bắn lead đồng thời về Telegram và Google Sheet Webhook
+    sendLeadToTelegram(leadPayload);
+    sendLeadToGoogleSheet(leadPayload);
 
     setTimeout(() => {
       setIsSubmitting(false);

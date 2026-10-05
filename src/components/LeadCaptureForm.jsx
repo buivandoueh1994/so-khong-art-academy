@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Phone, User, BookOpen, MapPin, ShieldCheck, CheckCircle, Clock, Gift, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
+import { sendLeadToGoogleSheet } from '../services/googleSheetService';
 
 export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess }) => {
   const [formData, setFormData] = useState({
@@ -61,15 +62,29 @@ export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess })
 
     setIsSubmitting(true);
 
-    // Gửi thông báo Lead về Telegram
-    sendLeadToTelegram({
+    const timeMap = {
+      'weekend': 'Cuối tuần (Thứ 7 & CN)',
+      'weekday-evening': 'Tối trong tuần (18h30 - 21h00)',
+      'weekday-afternoon': 'Chiều tan trường (17h00 - 18h30)'
+    };
+
+    const courseName = formData.course === 'kids'
+      ? 'Lớp Vẽ Trẻ Em (4–15 tuổi)'
+      : 'Mỹ Thuật Người Lớn (16+ tuổi)';
+
+    const leadPayload = {
       name: formData.fullName,
       phone: formData.phone,
       course: formData.course,
+      need: courseName,
       branch: formData.branch,
-      preferredTime: formData.preferredTime,
+      preferredTime: timeMap[formData.preferredTime] || formData.preferredTime,
       source: 'Form Đăng Ký Chính (Trang chủ)'
-    });
+    };
+
+    // Gửi đồng thời về Telegram và Google Sheet Webhook
+    sendLeadToTelegram(leadPayload);
+    sendLeadToGoogleSheet(leadPayload);
 
     // Simulate API call
     setTimeout(() => {

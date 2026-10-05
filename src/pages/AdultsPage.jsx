@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendLeadToTelegram } from '../services/telegramService';
+import { sendLeadToGoogleSheet } from '../services/googleSheetService';
 
 export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
   const [selectedMedium, setSelectedMedium] = useState('acrylic');
@@ -90,15 +91,31 @@ export const AdultsPage = ({ onOpenTrialModal, onNavigateHome }) => {
       return;
     }
 
-    // Bắn lead về Telegram
-    sendLeadToTelegram({
+    // Bắn lead về Telegram và Google Sheet Webhook
+    const mediumMap = {
+      acrylic: 'Khóa Màu Acrylic Hiện Đại',
+      watercolor: 'Khóa Màu Nước Watercolor Thư Giãn',
+      oil: 'Khóa Sơn Dầu Cổ Điển',
+      sketching: 'Khóa Ký Họa Bút Sắt Phố Cổ'
+    };
+
+    const timeScheduleMap = {
+      evening: 'Ca tối trong tuần (18h30 - 21h00)',
+      weekend: 'Cuối tuần Thứ 7 & CN'
+    };
+
+    const leadPayload = {
       name: formData.fullName,
       phone: formData.phone,
       course: formData.medium,
+      need: `Mỹ Thuật Người Lớn - ${mediumMap[formData.medium] || formData.medium}`,
       branch: formData.branch,
-      preferredTime: formData.preferredTime,
+      preferredTime: timeScheduleMap[formData.preferredTime] || formData.preferredTime,
       source: 'Trang Mỹ Thuật Người Lớn (Dedicated Page)'
-    });
+    };
+
+    sendLeadToTelegram(leadPayload);
+    sendLeadToGoogleSheet(leadPayload);
 
     setIsSubmitted(true);
     try {

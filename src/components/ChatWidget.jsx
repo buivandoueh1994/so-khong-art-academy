@@ -136,9 +136,10 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
     }
 
     saveLead({
-      name: leadFormData.name || 'Khách chat',
+      name: leadFormData.name || '',
       phone: leadFormData.phone,
       course: leadFormData.audience,
+      need: leadFormData.audience === 'kids' ? 'Lớp Vẽ Trẻ Em (4–15 tuổi)' : 'Mỹ Thuật Người Lớn (16+ tuổi)',
       branch: leadFormData.branch,
       source: 'Chatbot - Mini Lead Card'
     });
