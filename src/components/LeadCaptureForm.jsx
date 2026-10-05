@@ -302,7 +302,7 @@ export const LeadCaptureForm = ({ preselectedAudience = 'kids', onFormSuccess })
                           🖌️ Mỹ Thuật Người Lớn
                         </span>
                         <span className={`text-[11px] mt-1 ${formData.course === 'adults' ? 'text-stone-300' : 'text-charcoal-600'}`}>
-                          Từ 16 đến 65+ tuổi
+                          Lớp 16+ tuổi
                         </span>
                       </button>
                     </div>

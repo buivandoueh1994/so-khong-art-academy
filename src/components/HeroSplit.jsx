@@ -280,7 +280,7 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
                 </div>
 
                 <div className="absolute top-3 right-3 bg-stone-900 text-amber-300 text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-stone-700 shadow-[2px_2px_0px_#3f3f46]">
-                  Dành cho: 16 - 65+ tuổi
+                  Lớp 16+ tuổi
                 </div>
               </div>
             </div>
