@@ -174,14 +174,23 @@ export async function sendLeadToGoogleSheet(leadData = {}) {
 
     const formattedNote = noteParts.join(' | ');
 
-    // 7. Xây dựng đúng Payload theo quy định bắt buộc
+    // 7. Xây dựng đúng Payload khớp 100% với cách Google Apps Script hiện hành ghi vào các cột
+    // Cột D (thứ 4): Script hiện tại gán vào data.need -> Gán tên Cơ sở
+    // Cột E (thứ 5): Script hiện tại gán vào data.note -> Gán Nhu cầu / Khóa học
+    // Cột F (thứ 6): Script hiện tại gán vào data.psid -> Gán Ghi chú / Nguồn
     const payload = {
-      source: 'art_center', // BẮT BUỘC để Google Apps Script route vào tab "Art center"
+      source: 'art_center',
       name: formattedName,
       phone: cleanPhone,
+      // Cung cấp đầy đủ các khóa để dù Apps Script nhận theo kiểu nào cũng khớp:
       branch: formattedBranch,
-      need: formattedNeed,
-      note: formattedNote
+      co_so: formattedBranch,
+      coso: formattedBranch,
+      need: formattedBranch, // Script đang ghi trường này vào Cột D (Cơ sở)
+      note: formattedNeed,   // Script đang ghi trường này vào Cột E (Nhu cầu / Khóa học)
+      course: formattedNeed,
+      course_name: formattedNeed,
+      psid: formattedNote || 'Nguồn: Chatbot Tư Vấn AI' // Script đang ghi trường này vào Cột F (Ghi chú / PSID)
     };
 
     console.log('[Google Sheet Service] Đang gửi Payload về Webhook:', payload);
