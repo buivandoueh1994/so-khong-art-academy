@@ -37,6 +37,7 @@ export function extractPhoneNumber(text) {
 
 import { sendLeadToTelegram } from './telegramService.js';
 import { sendLeadToGoogleSheet, formatBranchName } from './googleSheetService.js';
+import { askGemini } from './geminiService.js';
 
 /**
  * Trợ giúp tên ngắn gọn của cơ sở cho thông báo
@@ -98,14 +99,17 @@ export function setPendingLead(lead) {
  * Phân tích ngữ cảnh đoạn chat để trích xuất Nhu cầu, Tên và Cơ sở nếu khách đề cập
  */
 export function analyzeCustomerIntent(conversationHistory = [], currentMessage = '') {
-  const allText = [
-    ...conversationHistory.map(m => m.text || ''),
-    currentMessage
-  ].join(' ').toLowerCase();
+  // Chỉ phân tích nội dung do KHÁCH HÀNG gửi (loại trừ phản hồi của bot tránh lẫn thông tin cơ sở)
+  const userOnlyTexts = conversationHistory
+    .filter(m => m && (m.sender === 'user' || m.role === 'user'))
+    .map(m => m.text || m.content || '');
 
-  let need = 'Quan tâm đăng ký học thử 0đ (Tư vấn qua Chatbot AI)';
+  const userText = [...userOnlyTexts, currentMessage].join(' ').toLowerCase();
+
+  let need = 'Mỹ Thuật Người Lớn (16+ tuổi) - Tự do thư giãn';
   let detectedName = '';
-  let branch = detectBranch(allText);
+  // Ưu tiên phát hiện cơ sở trong tin nhắn hiện tại, sau đó mới tới lịch sử tin nhắn của khách
+  let branch = detectBranch(currentMessage) || detectBranch(userText);
 
   // 1. Nhận diện họ tên khách hàng
   const namePatterns = [
@@ -134,26 +138,28 @@ export function analyzeCustomerIntent(conversationHistory = [], currentMessage =
   }
 
   // 2. Nhận diện khóa học / nhu cầu
-  if (allText.includes('bé') || allText.includes('trẻ em') || allText.includes('con') || allText.includes('cháu') || allText.includes('mầm')) {
-    if (allText.includes('4') || allText.includes('5') || allText.includes('6')) {
+  if (userText.includes('bé') || userText.includes('trẻ em') || userText.includes('con') || userText.includes('cháu') || userText.includes('mầm')) {
+    if (userText.includes('4') || userText.includes('5') || userText.includes('6')) {
       need = 'Lớp Vẽ Trẻ Em - Mầm Sáng Tạo (4–6 tuổi)';
-    } else if (allText.includes('7') || allText.includes('8') || allText.includes('9') || allText.includes('10')) {
+    } else if (userText.includes('7') || userText.includes('8') || userText.includes('9') || userText.includes('10')) {
       need = 'Lớp Vẽ Trẻ Em - Năng Khiếu Nhí (7–10 tuổi)';
-    } else if (allText.includes('11') || allText.includes('12') || allText.includes('13') || allText.includes('14') || allText.includes('15')) {
+    } else if (userText.includes('11') || userText.includes('12') || userText.includes('13') || userText.includes('14') || userText.includes('15')) {
       need = 'Lớp Vẽ Trẻ Em - Hội Họa Thiếu Niên (11–15 tuổi)';
     } else {
       need = 'Lớp Vẽ Trẻ Em (4–15 tuổi)';
     }
-  } else if (allText.includes('người lớn') || allText.includes('acrylic') || allText.includes('màu nước') || allText.includes('sơn dầu') || allText.includes('ký họa') || allText.includes('chưa biết vẽ')) {
-    if (allText.includes('màu nước') || allText.includes('watercolor')) {
-      need = 'Mỹ Thuật Người Lớn - Màu Nước Watercolor';
-    } else if (allText.includes('sơn dầu') || allText.includes('oil')) {
-      need = 'Mỹ Thuật Người Lớn - Sơn Dầu Cổ Điển';
-    } else if (allText.includes('ký họa')) {
-      need = 'Mỹ Thuật Người Lớn - Ký Họa Phố Cổ';
-    } else {
-      need = 'Mỹ Thuật Người Lớn (16+ tuổi) - Acrylic / Tự do';
-    }
+  } else if (userText.includes('màu nước') || userText.includes('watercolor')) {
+    need = 'Mỹ Thuật Người Lớn - Màu Nước Watercolor';
+  } else if (userText.includes('sơn dầu') || userText.includes('oil')) {
+    need = 'Mỹ Thuật Người Lớn - Sơn Dầu Cổ Điển';
+  } else if (userText.includes('ký họa')) {
+    need = 'Mỹ Thuật Người Lớn - Ký Họa Phố Cổ';
+  } else if (userText.includes('acrylic')) {
+    need = 'Mỹ Thuật Người Lớn - Acrylic Canvas';
+  } else if (userText.includes('người lớn') || userText.includes('đi làm') || userText.includes('thư giãn') || userText.includes('chưa biết vẽ')) {
+    need = 'Mỹ Thuật Người Lớn (16+ tuổi) - Tự do thư giãn';
+  } else {
+    need = 'Quan tâm đăng ký học thử 0đ (Tư vấn qua Chatbot AI)';
   }
 
   return { detectedName, need, branch };
@@ -189,11 +195,40 @@ export function saveLead(leadData) {
   }
 }
 
+export function suggestQuickReplies(userMessage, aiReply = '') {
+  const combined = (userMessage + ' ' + aiReply).toLowerCase();
+  if (combined.includes('bé') || combined.includes('trẻ em') || combined.includes('mầm sáng tạo') || combined.includes('năng khiếu nhí') || combined.includes('thiếu niên')) {
+    return ['⚡ Giữ suất học thử 0đ cho bé', '📍 5 Cơ sở HN & HP', '⏰ Lịch học cuối tuần', '🖌️ Mỹ Thuật Người Lớn'];
+  }
+  if (combined.includes('người lớn') || combined.includes('acrylic') || combined.includes('màu nước') || combined.includes('sơn dầu') || combined.includes('ký họa')) {
+    return ['⚡ Giữ suất học thử 0đ', '🖼️ Khóa Acrylic toan', '💧 Khóa Màu Nước', '⏰ Lịch ca tối'];
+  }
+  if (combined.includes('cơ sở') || combined.includes('địa chỉ') || combined.includes('ở đâu') || combined.includes('hải phòng') || combined.includes('hà nội')) {
+    return ['CS1: Ba Đình (HN)', 'CS2: Cầu Giấy (HN)', 'CS3: Tây Hồ (HN)', 'CS4: Lê Chân (HP)', 'CS5: Ngô Quyền (HP)'];
+  }
+  if (combined.includes('học phí') || combined.includes('giá') || combined.includes('bao nhiêu')) {
+    return ['⚡ Giữ suất học thử 0đ', '📍 Xem 5 cơ sở HN & HP', '⏰ Lịch học linh hoạt'];
+  }
+  return ['⚡ Suất học thử 0đ', '🎨 Lớp Bé (4–15t)', '🖌️ Mỹ Thuật Người Lớn', '📍 5 Cơ sở HN & HP'];
+}
+
+export function isLeadCardRelevant(userMessage, aiReply = '') {
+  const combined = (userMessage + ' ' + aiReply).toLowerCase();
+  return combined.includes('học thử') ||
+         combined.includes('đăng ký') ||
+         combined.includes('số điện thoại') ||
+         combined.includes('để lại số') ||
+         combined.includes('zalo') ||
+         combined.includes('giữ chỗ') ||
+         combined.includes('học phí') ||
+         combined.includes('lịch học');
+}
+
 /**
  * Smart Consultative Dialog Engine
  * Vừa trả lời giải đáp thắc mắc, vừa khéo léo dẫn dắt xin Tên + SĐT để giữ chỗ học thử 0đ
  */
-export function generateBotResponse(userMessage, conversationHistory = []) {
+export async function generateBotResponse(userMessage, conversationHistory = []) {
   const text = userMessage.toLowerCase().trim();
   const phone = extractPhoneNumber(userMessage);
   const pendingLead = getPendingLead();
@@ -267,7 +302,47 @@ export function generateBotResponse(userMessage, conversationHistory = []) {
     };
   }
 
-  // 3. Khách hỏi Tư vấn lớp chung chung ("tư vấn lớp cho tôi", "tư vấn giúp", "có những lớp nào", "tôi muốn học vẽ",...)
+  // 3. TƯ VẤN & TRÒ CHUYỆN BẰNG GOOGLE GEMINI AI
+  try {
+    const geminiHistory = (conversationHistory || [])
+      .filter(m => m && (m.text || m.content))
+      .slice(-10)
+      .map(m => ({
+        role: (m.sender === 'user' || m.role === 'user') ? 'user' : 'model',
+        content: m.text || m.content
+      }));
+
+    if (
+      geminiHistory.length === 0 ||
+      geminiHistory[geminiHistory.length - 1].role !== 'user' ||
+      geminiHistory[geminiHistory.length - 1].content !== userMessage
+    ) {
+      geminiHistory.push({ role: 'user', content: userMessage });
+    }
+
+    const aiReply = await askGemini(geminiHistory);
+    if (aiReply && aiReply.trim()) {
+      return {
+        text: aiReply.trim(),
+        showLeadCard: isLeadCardRelevant(userMessage, aiReply),
+        quickReplies: suggestQuickReplies(userMessage, aiReply)
+      };
+    }
+  } catch (err) {
+    console.warn('[Chatbot Engine] Gemini consultation fallback triggered:', err);
+  }
+
+  // 4. FALLBACK CỤC BỘ (Nếu không có kết nối Gemini)
+  return getLocalFallbackResponse(userMessage);
+}
+
+/**
+ * Fallback phản hồi tĩnh dựa trên từ khóa khi không có mạng hoặc Gemini gián đoạn
+ */
+export function getLocalFallbackResponse(userMessage) {
+  const text = userMessage.toLowerCase().trim();
+
+  // 1. Khách hỏi Tư vấn lớp chung chung ("tư vấn lớp cho tôi", "tư vấn giúp", "có những lớp nào", "tôi muốn học vẽ",...)
   const isGeneralConsultRequest =
     text.includes('tư vấn lớp') ||
     text.includes('tư vấn giúp') ||

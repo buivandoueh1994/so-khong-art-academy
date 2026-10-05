@@ -94,7 +94,7 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSendMessage = (textToSend) => {
+  const handleSendMessage = async (textToSend) => {
     const text = (textToSend || inputValue).trim();
     if (!text || isTyping) return;
 
@@ -104,12 +104,13 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
       text
     };
 
-    setMessages(prev => [...prev, userMsg]);
+    const currentHistory = [...messages, userMsg];
+    setMessages(currentHistory);
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      const botReply = generateBotResponse(text, messages);
+    try {
+      const botReply = await generateBotResponse(text, currentHistory);
       setIsTyping(false);
 
       const botMsg = {
@@ -128,7 +129,10 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
           confetti({ particleCount: 70, spread: 50, origin: { y: 0.6 } });
         } catch (e) {}
       }
-    }, 700);
+    } catch (err) {
+      console.error('Error generating bot response:', err);
+      setIsTyping(false);
+    }
   };
 
   const handleMiniLeadSubmit = (e) => {
