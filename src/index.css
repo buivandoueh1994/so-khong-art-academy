@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom hand-drawn & artistic aesthetics */
+.font-hand {
+  font-family: 'Patrick Hand', 'Caveat', cursive;
+}
+
+.font-heading {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Brush stroke highlight background */
+.brush-highlight {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.brush-highlight::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  bottom: 4px;
+  height: 40%;
+  background-color: #FDE047;
+  z-index: -1;
+  border-radius: 4px;
+  transform: rotate(-1deg);
+  opacity: 0.85;
+}
+
+.brush-highlight-pill {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.brush-highlight-pill::before {
+  content: '';
+  position: absolute;
+  inset: -2px -8px;
+  background-color: #FEF08A;
+  z-index: -1;
+  border-radius: 9999px;
+  transform: rotate(-0.5deg);
+}
+
+/* Doodle border box */
+.doodle-card {
+  border: 2px solid #27272A;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px 0px #18181B;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doodle-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #18181B;
+}
+
+.doodle-card-yellow {
+  border: 2px solid #EAB308;
+  border-radius: 20px;
+  box-shadow: 4px 4px 0px 0px #FACC15;
+  transition: all 0.25s ease;
+}
+
+.doodle-btn {
+  border: 2px solid #18181B;
+  box-shadow: 3px 3px 0px 0px #18181B;
+  transition: all 0.2s ease;
+}
+
+.doodle-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px 0px #18181B;
+}
+
+.doodle-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px #18181B;
+}
+
+/* Organic blobs */
+.organic-shape-1 {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.organic-shape-2 {
+  border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+}
+
+/* Soft paper texture effect */
+.paper-bg {
+  background-color: #FFFDF9;
+  background-image: radial-gradient(#FDE047 0.75px, transparent 0.75px);
+  background-size: 24px 24px;
+}
+
+/* Floating animation */
+@keyframes softFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1deg);
+  }
+}
+
+.animate-float {
+  animation: softFloat 4s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 3s ease-in-out infinite;
+}
