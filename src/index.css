@@ -5,7 +5,25 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Hardware-accelerated smooth animations, anti-flicker on WebKit/Blink */
+.animate-float,
+.animate-wiggle {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 /* Custom hand-drawn & artistic aesthetics */
@@ -59,11 +77,11 @@
   border: 2px solid #27272A;
   border-radius: 20px;
   box-shadow: 4px 4px 0px 0px #18181B;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .doodle-card:hover {
-  transform: translate(-2px, -2px);
+  transform: translate3d(-2px, -2px, 0);
   box-shadow: 6px 6px 0px 0px #18181B;
 }
 
@@ -71,22 +89,22 @@
   border: 2px solid #EAB308;
   border-radius: 20px;
   box-shadow: 4px 4px 0px 0px #FACC15;
-  transition: all 0.25s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .doodle-btn {
   border: 2px solid #18181B;
   box-shadow: 3px 3px 0px 0px #18181B;
-  transition: all 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .doodle-btn:hover {
-  transform: translate(-1px, -1px);
+  transform: translate3d(-1px, -1px, 0);
   box-shadow: 5px 5px 0px 0px #18181B;
 }
 
 .doodle-btn:active {
-  transform: translate(2px, 2px);
+  transform: translate3d(2px, 2px, 0);
   box-shadow: 1px 1px 0px 0px #18181B;
 }
 
@@ -106,13 +124,13 @@
   background-size: 24px 24px;
 }
 
-/* Floating animation */
+/* Hardware accelerated 3D float animation */
 @keyframes softFloat {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translateY(-6px) rotate(1deg);
+    transform: translate3d(0, -5px, 0) rotate(1deg);
   }
 }
 
@@ -121,8 +139,12 @@
 }
 
 @keyframes wiggle {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2deg); }
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translate3d(0, 0, 0) rotate(1.5deg);
+  }
 }
 
 .animate-wiggle {

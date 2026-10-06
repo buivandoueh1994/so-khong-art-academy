@@ -45,12 +45,19 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Monitor scroll for Scroll-to-Top button
+  // Monitor scroll for Scroll-to-Top button (Throttled via requestAnimationFrame)
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 350);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowScrollTop(window.scrollY > 350);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -249,7 +256,7 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-400 hover:bg-brand-300 text-charcoal-900 font-heading font-black text-xs rounded-full border-2 border-charcoal-900 shadow-[2px_2px_0px_#18181B] hover:shadow-[3px_3px_0px_#18181B] hover:-translate-y-0.5 transition-all"
               title="Đăng ký suất học thử 0đ"
             >
-              <Sparkles className="w-3.5 h-3.5 text-charcoal-900 flex-shrink-0 animate-pulse" />
+              <Sparkles className="w-3.5 h-3.5 text-charcoal-900 flex-shrink-0" />
               <span>Học thử 0đ</span>
             </button>
 
@@ -296,11 +303,10 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
             aria-label={isOpen ? 'Đóng cửa sổ chat' : 'Mở chatbot tư vấn'}
             title="Tư vấn nghệ thuật Số Không"
           >
-            {/* Online green indicator */}
+            {/* Online green indicator (Crisp glow dot, no heavy GPU layer invalidation) */}
             {!isOpen && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
+              <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 pointer-events-none">
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white shadow-[0_0_8px_#10B981]"></span>
               </span>
             )}
 

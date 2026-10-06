@@ -7,10 +7,17 @@ export const Navbar = ({ currentView = 'home', onNavigate, onOpenTrialModal }) =
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -40,10 +47,10 @@ export const Navbar = ({ currentView = 'home', onNavigate, onOpenTrialModal }) =
 
   return (
     <header
-      className={`sticky top-[33px] sm:top-[33px] z-40 transition-all duration-300 ${
+      className={`sticky top-[33px] sm:top-[33px] z-40 py-2.5 transform-gpu transition-[background-color,box-shadow,border-color] duration-200 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm py-2'
-          : 'bg-[#FFFDF9]/95 backdrop-blur-sm py-3 border-b border-amber-100/90'
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200/60'
+          : 'bg-[#FFFDF9]/95 backdrop-blur-sm border-b border-amber-100/90'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

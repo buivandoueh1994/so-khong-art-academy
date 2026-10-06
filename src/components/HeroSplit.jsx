@@ -8,15 +8,15 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
 
   return (
     <section id="home" className="relative overflow-hidden pt-4 pb-10 lg:pb-14 bg-[#FFFDF9]">
-      {/* Background soft ambient warm gradient */}
-      <div className="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(#FDE047_1px,transparent_1px)] [background-size:20px_20px]" />
+      {/* Background soft ambient warm gradient with GPU layer isolation */}
+      <div className="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(#FDE047_1px,transparent_1px)] [background-size:20px_20px] transform-gpu" />
       
       {/* Decorative doodles in hero atmosphere */}
-      <div className="hidden xl:block absolute top-10 left-10 text-amber-400 opacity-60">
+      <div className="hidden xl:block absolute top-10 left-10 text-amber-400 opacity-60 pointer-events-none transform-gpu">
         <SparkleDoodle className="w-8 h-8 animate-wiggle" />
       </div>
-      <div className="hidden xl:block absolute top-12 right-12 text-amber-500 opacity-50">
-        <SparkleDoodle className="w-6 h-6 animate-pulse" />
+      <div className="hidden xl:block absolute top-12 right-12 text-amber-500 opacity-50 pointer-events-none transform-gpu">
+        <SparkleDoodle className="w-6 h-6" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -110,8 +110,8 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-charcoal-900/10 to-transparent" />
                 
                 {/* Floating Micro-Badge */}
-                <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm flex items-center gap-2 transform-gpu">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10B981]" />
                   <span className="text-[11px] sm:text-xs font-bold text-charcoal-900">
                     🎨 Tự hoàn thiện tranh ngay buổi 1
                   </span>
@@ -199,8 +199,8 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-charcoal-900/10 to-transparent" />
                 
                 {/* Floating Micro-Badge */}
-                <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+                <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-2 transform-gpu">
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_6px_#F59E0B]" />
                   <span className="text-[11px] sm:text-xs font-bold text-charcoal-900">
                     ☕ Hoàn thiện tranh đẹp ngay buổi 1
                   </span>
