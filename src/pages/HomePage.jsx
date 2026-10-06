@@ -1,5 +1,6 @@
 import React from 'react';
 import { HeroSplit } from '../components/HeroSplit';
+import { WhyChooseUsSection } from '../components/WhyChooseUsSection';
 import { StatsScaleSection } from '../components/StatsScaleSection';
 import { ValuePillars } from '../components/ValuePillars';
 import { RoadmapSection } from '../components/RoadmapSection';
@@ -18,25 +19,32 @@ export const HomePage = ({ onOpenTrialModal, onSelectAudience, onNavigateKids, o
         onNavigateAdults={onNavigateAdults}
       />
 
-      {/* 2. Stats & Scale Counter Section (5 Centers, 12,500+ Students, 28,000+ Artworks) */}
+      {/* 2. Section Mới: Đặc Quyền Học Viên & Vì Sao Chọn Số Không */}
+      <WhyChooseUsSection 
+        onOpenTrialModal={onOpenTrialModal}
+        onNavigateKids={onNavigateKids}
+        onNavigateAdults={onNavigateAdults}
+      />
+
+      {/* 3. Stats & Scale Counter Section (5 Centers, 12,500+ Students, 28,000+ Artworks) */}
       <StatsScaleSection />
 
-      {/* 3. 5 Core Value Pillars */}
+      {/* 4. 5 Core Value Pillars */}
       <ValuePillars />
 
-      {/* 4. 5-Step Learning Roadmap */}
+      {/* 5. 5-Step Learning Roadmap */}
       <RoadmapSection onOpenTrialModal={onOpenTrialModal} />
 
-      {/* 5. Student Art Gallery */}
+      {/* 6. Student Art Gallery */}
       <ArtGallery onOpenTrialModal={onOpenTrialModal} />
 
-      {/* 6. Social Proof & Testimonials */}
+      {/* 7. Social Proof & Testimonials */}
       <Testimonials />
 
-      {/* 7. High-Converting Lead Capture Form */}
+      {/* 8. High-Converting Lead Capture Form */}
       <LeadCaptureForm onOpenTrialModal={onOpenTrialModal} />
 
-      {/* 8. FAQs */}
+      {/* 9. FAQs */}
       <FAQSection />
     </>
   );

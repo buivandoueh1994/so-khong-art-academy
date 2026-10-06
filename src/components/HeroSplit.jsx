@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
 import { PaletteDoodle, SunDoodle, BrushDoodle, SparkleDoodle, PaintSplashBg } from './Doodles';
-import { CheckCircle2, ArrowRight, Sparkles, Heart } from 'lucide-react';
+import { ArrowRight, Sparkles, Heart } from 'lucide-react';
 
 export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }) => {
   // Mobile tab selector so users on small screens can switch or view both easily
   const [activeMobileTab, setActiveMobileTab] = useState('both'); // 'kids' | 'adults' | 'both'
 
-  const handleRegisterKids = () => {
-    onSelectAudience('kids');
-  };
-
-  const handleRegisterAdults = () => {
-    onSelectAudience('adults');
-  };
-
   return (
-    <section id="home" className="relative overflow-hidden pt-4 pb-12 lg:pb-16 bg-[#FFFDF9]">
+    <section id="home" className="relative overflow-hidden pt-4 pb-10 lg:pb-14 bg-[#FFFDF9]">
       {/* Background soft ambient warm gradient */}
       <div className="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(#FDE047_1px,transparent_1px)] [background-size:20px_20px]" />
       
@@ -70,120 +62,86 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
           {/* ================= LEFT COLUMN: TRẺ EM ================= */}
           <div
             id="lop-tre-em"
-            className={`relative rounded-3xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between overflow-hidden border-2 border-amber-200/80 bg-gradient-to-br from-amber-50/90 via-yellow-50/50 to-white shadow-[0_12px_30px_rgba(251,191,36,0.12)] ${
+            className={`relative rounded-3xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between overflow-hidden border-2 border-amber-200/90 bg-gradient-to-br from-amber-50/90 via-yellow-50/40 to-white shadow-[0_12px_32px_rgba(251,191,36,0.12)] ${
               activeMobileTab === 'adults' ? 'hidden lg:flex' : 'flex'
             }`}
           >
             {/* Organic paint splash graphic background */}
-            <PaintSplashBg className="absolute -top-20 -left-20 w-[450px] h-[450px] pointer-events-none -z-0" />
+            <PaintSplashBg className="absolute -top-20 -left-20 w-[450px] h-[450px] pointer-events-none -z-0 opacity-80" />
 
+            {/* Header & Typography Section */}
             <div className="relative z-10">
-              {/* Header Badge & Doodles */}
-              <div className="flex items-start justify-between mb-4">
+              {/* Badge & Doodle */}
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <PaletteDoodle className="w-11 h-11 transform -rotate-6 filter drop-shadow-sm" />
+                  <PaletteDoodle className="w-10 h-10 transform -rotate-6 filter drop-shadow-sm flex-shrink-0" />
                   <div>
-                    <span className="inline-block bg-brand-300/80 text-charcoal-900 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-400 uppercase tracking-wider mb-1">
-                      Hệ thống lớp vẽ dành cho <span className="bg-amber-400 text-charcoal-900 px-1.5 py-0.2 rounded font-extrabold">trẻ em</span>
+                    <span className="inline-block bg-amber-200/90 text-charcoal-900 text-[11px] sm:text-xs font-black px-3 py-1 rounded-full border border-amber-400 uppercase tracking-wider mb-1 shadow-sm">
+                      DÀNH CHO TRẺ EM (4–15 TUỔI)
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-charcoal-900">
                       LỚP VẼ SỐ KHÔNG
                     </h2>
                   </div>
                 </div>
-                <SunDoodle className="w-10 h-10 animate-float text-amber-500 hidden sm:block" />
+                <SunDoodle className="w-9 h-9 animate-float text-amber-500 hidden sm:block flex-shrink-0" />
               </div>
 
-              {/* Catchphrase Tags */}
-              <div className="flex flex-wrap items-center gap-2 mb-4 text-xs font-bold text-amber-900">
-                <span className="bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300">
-                  ✨ Khám phá
-                </span>
-                <span className="text-amber-500">•</span>
-                <span className="bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300">
-                  🌱 Rèn luyện
-                </span>
-                <span className="text-amber-500">•</span>
-                <span className="bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300">
-                  🚀 Sáng tạo
-                </span>
-              </div>
-
-              {/* Main Headline */}
-              <h3 className="text-xl sm:text-2xl font-heading font-bold text-charcoal-900 leading-snug mb-3">
-                Khơi Mở Sáng Tạo – Bé Vẽ Vui, Tự Tin Từng Nét Bút
+              {/* Main Headline (<= 2 dòng) */}
+              <h3 className="text-xl sm:text-2xl font-heading font-bold text-charcoal-900 leading-snug mb-2">
+                Khơi Mở Sáng Tạo – Tự Do Từng Nét Vẽ
               </h3>
 
-              {/* Subheadline */}
-              <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed mb-5">
-                Lộ trình cá nhân hóa cho trẻ <strong>4–15 tuổi</strong>. Bắt đầu từ số 0, không cần năng khiếu.
-                Phương pháp khơi gợi trực quan giúp con yêu thích hội họa tự nhiên.
+              {/* Mô tả ngắn gọn (15-20 từ, <= 2 dòng) */}
+              <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed mb-4">
+                Lộ trình cá nhân hóa, 100% không vẽ hộ, giúp con tự tin bộc lộ cảm xúc và trí tưởng tượng.
               </p>
-
-              {/* Key Benefits List */}
-              <div className="space-y-2.5 mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-2xl border border-amber-100">
-                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-charcoal-800">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Rèn luyện tính kiên nhẫn & tư duy màu sắc:</strong> Kích thích bán cầu não phải, giúp trẻ tập trung và biểu đạt cảm xúc tự tin.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-charcoal-800">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Giáo viên tốt nghiệp Mỹ thuật kèm cặp 1:1:</strong> Nhẹ nhàng hướng dẫn, phát hiện thế mạnh riêng, tuyệt đối không cầm tay vẽ hộ.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-charcoal-800">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Tài liệu & ảnh tiến độ gửi phụ huynh:</strong> Cập nhật sản phẩm và nhận xét của thầy cô sau mỗi buổi học.</span>
-                </div>
-              </div>
             </div>
 
-            {/* Visual Photo Card with Overlays */}
-            <div className="relative mb-6 group">
-              <div className="relative h-56 sm:h-64 rounded-2xl overflow-hidden border-2 border-stone-800/10 shadow-md">
+            {/* Visual Photo Section (Tôn vinh hình ảnh, chiếm 45% - 50% diện tích) */}
+            <div className="relative my-1 sm:my-2 group flex-1 flex flex-col justify-center">
+              <div className="relative h-64 sm:h-72 lg:h-80 w-full rounded-2xl overflow-hidden border-2 border-stone-800/10 shadow-md">
                 <img
                   src="/assets/hero_kids.jpg"
-                  alt="Bé vẽ vui tại Lớp Vẽ Số Không"
+                  alt="Bé tự tin hoàn thiện tác phẩm tại Lớp Vẽ Số Không"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="eager"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-charcoal-900/10 to-transparent" />
                 
                 {/* Floating Micro-Badge */}
                 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-amber-200 shadow-sm flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[11px] font-bold text-charcoal-800">
-                    Bé hoàn thiện 1 bức tranh ngay buổi thử!
+                  <span className="text-[11px] sm:text-xs font-bold text-charcoal-900">
+                    🎨 Tự hoàn thiện tranh ngay buổi 1
                   </span>
                 </div>
 
                 <div className="absolute top-3 right-3 bg-amber-400 text-charcoal-900 text-[11px] font-extrabold px-2.5 py-1 rounded-lg border border-charcoal-900 shadow-[2px_2px_0px_#18181B]">
-                  Độ tuổi: 4 - 15 tuổi
+                  Độ tuổi: 4 – 15 tuổi
                 </div>
               </div>
             </div>
 
-            {/* Action CTA Button */}
-            <div className="mt-auto pt-2 space-y-2">
+            {/* Action CTA Button duy nhất & Link phụ tinh gọn */}
+            <div className="mt-4 pt-1 space-y-2 relative z-10">
               <button
-                onClick={handleRegisterKids}
-                className="w-full py-3.5 sm:py-4 px-6 bg-brand-400 hover:bg-brand-300 text-charcoal-900 font-heading font-black text-sm sm:text-base rounded-2xl border-2 border-charcoal-900 shadow-[4px_4px_0px_0px_#18181B] hover:shadow-[5px_5px_0px_0px_#18181B] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center"
+                onClick={onNavigateKids}
+                className="group w-full py-3.5 sm:py-4 px-6 bg-brand-400 hover:bg-brand-300 text-charcoal-900 font-heading font-black text-sm sm:text-base rounded-2xl border-2 border-charcoal-900 shadow-[4px_4px_0px_0px_#18181B] hover:shadow-[5px_5px_0px_0px_#18181B] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center"
               >
-                <span>Đăng ký học thử cho bé (Miễn phí)</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-charcoal-900" />
+                <span>Khám phá lớp Trẻ Em</span>
+                <ArrowRight className="w-5 h-5 text-charcoal-900 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              {/* Dedicated Page Link */}
-              <div className="flex items-center justify-between px-1 pt-1 text-xs">
+              {/* Sub-action link nhẹ nhàng */}
+              <div className="text-center pt-0.5">
                 <button
-                  onClick={onNavigateKids}
-                  className="font-bold text-amber-800 hover:text-amber-950 underline decoration-amber-400 decoration-2 underline-offset-4 flex items-center gap-1"
+                  onClick={() => onSelectAudience('kids')}
+                  className="text-xs font-bold text-amber-900/80 hover:text-charcoal-900 transition-colors inline-flex items-center gap-1.5 underline decoration-amber-300 underline-offset-4"
                 >
-                  <span>Xem chi tiết 3 nhóm tuổi & thời khóa biểu bé</span>
-                  <span>→</span>
+                  <span>Hoặc Đăng ký học thử 0đ cho bé</span>
+                  <span className="text-amber-600 font-extrabold">→</span>
                 </button>
-                <span className="text-[11px] text-charcoal-500 hidden sm:inline flex items-center gap-1">
-                  <Heart className="w-3 h-3 text-red-500 fill-red-500" /> Miễn phí 100%
-                </span>
               </div>
             </div>
           </div>
@@ -191,91 +149,60 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
           {/* ================= RIGHT COLUMN: NGƯỜI LỚN ================= */}
           <div
             id="lop-nguoi-lon"
-            className={`relative rounded-3xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between overflow-hidden border-2 border-stone-200/90 bg-gradient-to-br from-stone-50 via-amber-50/30 to-white shadow-[0_12px_30px_rgba(40,40,40,0.06)] ${
+            className={`relative rounded-3xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between overflow-hidden border-2 border-stone-200/90 bg-gradient-to-br from-stone-50 via-amber-50/30 to-white shadow-[0_12px_32px_rgba(40,40,40,0.06)] ${
               activeMobileTab === 'kids' ? 'hidden lg:flex' : 'flex'
             }`}
           >
             {/* Background subtle art canvas feeling */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-amber-200/20 rounded-full blur-3xl pointer-events-none -z-0" />
 
+            {/* Header & Typography Section */}
             <div className="relative z-10">
-              {/* Header Badge & Doodles */}
-              <div className="flex items-start justify-between mb-4">
+              {/* Badge & Doodle */}
+              <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <BrushDoodle className="w-11 h-11 transform rotate-6 filter drop-shadow-sm" />
+                  <BrushDoodle className="w-10 h-10 transform rotate-6 filter drop-shadow-sm flex-shrink-0 text-stone-700" />
                   <div>
-                    <span className="inline-block bg-stone-200/80 text-charcoal-900 text-xs font-bold px-2.5 py-0.5 rounded-full border border-stone-300 uppercase tracking-wider mb-1">
-                      Hệ thống mỹ thuật dành cho <span className="bg-charcoal-900 text-amber-200 px-1.5 py-0.2 rounded font-extrabold">người lớn</span>
+                    <span className="inline-block bg-stone-200 text-charcoal-900 text-[11px] sm:text-xs font-black px-3 py-1 rounded-full border border-stone-300 uppercase tracking-wider mb-1 shadow-sm">
+                      DÀNH CHO NGƯỜI LỚN (16+)
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-charcoal-900">
                       MỸ THUẬT SỐ KHÔNG
                     </h2>
                   </div>
                 </div>
-                <div className="hidden sm:block text-stone-400">
+                <div className="hidden sm:block text-stone-400 flex-shrink-0">
                   <Sparkles className="w-8 h-8 text-amber-500" />
                 </div>
               </div>
 
-              {/* Catchphrase Tags */}
-              <div className="flex flex-wrap items-center gap-2 mb-4 text-xs font-bold text-stone-700">
-                <span className="bg-stone-100 px-3 py-1 rounded-full border border-stone-300">
-                  ☕ Học vẽ từ số 0
-                </span>
-                <span className="text-stone-400">•</span>
-                <span className="bg-stone-100 px-3 py-1 rounded-full border border-stone-300">
-                  🎨 Nâng cao kỹ năng
-                </span>
-                <span className="text-stone-400">•</span>
-                <span className="bg-stone-100 px-3 py-1 rounded-full border border-stone-300">
-                  🌿 Phát triển phong cách
-                </span>
-              </div>
-
-              {/* Main Headline */}
-              <h3 className="text-xl sm:text-2xl font-heading font-bold text-charcoal-900 leading-snug mb-3">
-                Hiện Thực Hóa Đam Mê Hội Họa – Thư Giãn Sau Giờ Làm
+              {/* Main Headline (<= 2 dòng) */}
+              <h3 className="text-xl sm:text-2xl font-heading font-bold text-charcoal-900 leading-snug mb-2">
+                Thư Giãn Cùng Hội Họa – Bắt Đầu Từ Con Số 0
               </h3>
 
-              {/* Subheadline */}
-              <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed mb-5">
-                Học vẽ từ con số 0. Tự tay hoàn thiện tác phẩm hoàn chỉnh sau khóa học.
-                Dành cho người đi làm, sinh viên tìm kiếm không gian bình yên, chữa lành tâm hồn.
+              {/* Mô tả ngắn gọn (15-20 từ, <= 2 dòng) */}
+              <p className="text-sm sm:text-base text-charcoal-700 leading-relaxed mb-4">
+                Kèm cặp 1:1, không gian trà hoa nhạc nhẹ, hoàn thiện tranh đẹp ngay buổi đầu tiên.
               </p>
-
-              {/* Key Benefits List */}
-              <div className="space-y-2.5 mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-2xl border border-stone-200">
-                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-charcoal-800">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Lịch học linh hoạt, bảo lưu & học bù tự do:</strong> Chủ động xếp lịch theo tuần, không lo mất buổi khi bận công việc hay công tác.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-charcoal-800">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Không gian xưởng vẽ mở, đầy cảm hứng:</strong> Nhạc nhẹ, trà hoa, không khí ấm cúng với đầy đủ giá vẽ, sơn dầu, acrylic và màu nước.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-charcoal-800">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Lộ trình cá nhân theo sở thích tranh:</strong> Thích vẽ phong cảnh, tĩnh vật, ký họa phố cổ hay chân dung đều được giáo viên định hướng riêng.</span>
-                </div>
-              </div>
             </div>
 
-            {/* Visual Photo Card with Overlays */}
-            <div className="relative mb-6 group">
-              <div className="relative h-56 sm:h-64 rounded-2xl overflow-hidden border-2 border-stone-800/10 shadow-md">
+            {/* Visual Photo Section (Tôn vinh hình ảnh, chiếm 45% - 50% diện tích) */}
+            <div className="relative my-1 sm:my-2 group flex-1 flex flex-col justify-center">
+              <div className="relative h-64 sm:h-72 lg:h-80 w-full rounded-2xl overflow-hidden border-2 border-stone-800/10 shadow-md">
                 <img
                   src="/assets/hero_adults.jpg"
-                  alt="Học viên người lớn tại Mỹ Thuật Số Không"
+                  alt="Không gian thư giãn sáng tạo của học viên người lớn tại Mỹ Thuật Số Không"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="eager"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/60 via-charcoal-900/10 to-transparent" />
                 
                 {/* Floating Micro-Badge */}
                 <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="text-[11px] font-bold text-charcoal-800">
-                    Hơn 92% học viên hoàn thiện tranh sau buổi đầu!
+                  <span className="text-[11px] sm:text-xs font-bold text-charcoal-900">
+                    ☕ Hoàn thiện tranh đẹp ngay buổi 1
                   </span>
                 </div>
 
@@ -285,28 +212,25 @@ export const HeroSplit = ({ onSelectAudience, onNavigateKids, onNavigateAdults }
               </div>
             </div>
 
-            {/* Action CTA Button */}
-            <div className="mt-auto pt-2 space-y-2">
+            {/* Action CTA Button duy nhất & Link phụ tinh gọn */}
+            <div className="mt-4 pt-1 space-y-2 relative z-10">
               <button
-                onClick={handleRegisterAdults}
-                className="w-full py-3.5 sm:py-4 px-6 bg-charcoal-900 hover:bg-charcoal-800 text-amber-300 font-heading font-black text-sm sm:text-base rounded-2xl border-2 border-charcoal-900 shadow-[4px_4px_0px_0px_#FACC15] hover:shadow-[5px_5px_0px_0px_#FACC15] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center"
+                onClick={onNavigateAdults}
+                className="group w-full py-3.5 sm:py-4 px-6 bg-charcoal-900 hover:bg-charcoal-800 text-amber-300 font-heading font-black text-sm sm:text-base rounded-2xl border-2 border-charcoal-900 shadow-[4px_4px_0px_0px_#FACC15] hover:shadow-[5px_5px_0px_0px_#FACC15] hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center"
               >
-                <span>Đăng ký buổi trải nghiệm ngay</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
+                <span>Khám phá lớp Người Lớn</span>
+                <ArrowRight className="w-5 h-5 text-amber-300 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              {/* Dedicated Page Link */}
-              <div className="flex items-center justify-between px-1 pt-1 text-xs">
+              {/* Sub-action link nhẹ nhàng */}
+              <div className="text-center pt-0.5">
                 <button
-                  onClick={onNavigateAdults}
-                  className="font-bold text-charcoal-900 hover:text-amber-800 underline decoration-amber-500 decoration-2 underline-offset-4 flex items-center gap-1"
+                  onClick={() => onSelectAudience('adults')}
+                  className="text-xs font-bold text-stone-600 hover:text-charcoal-900 transition-colors inline-flex items-center gap-1.5 underline decoration-stone-300 underline-offset-4"
                 >
-                  <span>Xem chi tiết 4 chất liệu & ca tối người lớn</span>
-                  <span>→</span>
+                  <span>Hoặc Đăng ký buổi trải nghiệm 0đ</span>
+                  <span className="text-amber-600 font-extrabold">→</span>
                 </button>
-                <span className="text-[11px] text-charcoal-500 hidden sm:inline">
-                  Trải nghiệm 90 phút • 0đ
-                </span>
               </div>
             </div>
           </div>

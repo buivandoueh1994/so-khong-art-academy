@@ -20,6 +20,7 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showTeaser, setShowTeaser] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -35,6 +36,14 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Auto-hide teaser after 8s to avoid cluttering screen
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowTeaser(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Monitor scroll for Scroll-to-Top button
   useEffect(() => {
@@ -194,14 +203,14 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
 
   return (
     <>
-      {/* ================= CLUSTER NÚT NỔI Ở GÓC PHẢI (RIGHT FLOATING CLUSTER) ================= */}
-      <aside aria-label="Hỗ trợ & Đăng ký nhanh" className="fixed bottom-6 right-4 sm:right-6 z-40 flex flex-col items-end gap-2.5 pointer-events-auto">
+      {/* ================= CLUSTER NÚT NỔI Ở GÓC PHẢI (RIGHT FLOATING CLUSTER - SPEED DIAL) ================= */}
+      <aside aria-label="Hỗ trợ & Đăng ký nhanh" className="fixed bottom-5 right-4 sm:right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
         
         {/* 1. Nút cuộn lên đầu trang (Chỉ hiện khi đã cuộn qua 350px) */}
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="w-9 h-9 rounded-full bg-white/95 text-charcoal-700 hover:text-charcoal-900 shadow-md border border-stone-200 flex items-center justify-center transition-all hover:-translate-y-1 animate-fadeIn"
+            className="w-8 h-8 rounded-full bg-white/95 text-charcoal-700 hover:text-charcoal-900 shadow-md border border-stone-200 flex items-center justify-center transition-all hover:-translate-y-0.5 animate-fadeIn"
             aria-label="Cuộn lên đầu trang"
             title="Lên đầu trang"
           >
@@ -209,41 +218,9 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
           </button>
         )}
 
-        {/* 2. Nút Học Thử 0đ (Trial CTA Pill) */}
-        <button
-          onClick={onOpenTrialModal}
-          className="group flex items-center gap-1.5 px-3.5 py-2 bg-brand-400 hover:bg-brand-300 text-charcoal-900 font-heading font-black text-xs rounded-full border-2 border-charcoal-900 shadow-[2px_2px_0px_#18181B] hover:shadow-[3px_3px_0px_#18181B] hover:-translate-y-0.5 active:translate-y-0.5 transition-all"
-          title="Đăng ký suất học thử 0đ"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-charcoal-900 flex-shrink-0 animate-pulse" />
-          <span>Học thử 0đ</span>
-        </button>
-
-        {/* 3. Nút Chat Zalo 24/7 */}
-        <a
-          href="https://zalo.me/0988123456"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative flex items-center gap-2 bg-[#0068FF] hover:bg-[#0054cc] text-white p-2.5 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all border border-blue-400"
-          title="Nhắn tin Zalo 24/7"
-        >
-          <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-400"></span>
-          </span>
-
-          <svg className="w-5 h-5 fill-white flex-shrink-0" viewBox="0 0 48 48">
-            <path d="M24 4C12.95 4 4 12.51 4 23.01c0 5.92 2.83 11.23 7.29 14.77l-1.87 6.94c-.21.78.53 1.46 1.25 1.15l7.73-3.32c1.78.47 3.66.73 5.6.73 11.05 0 20-8.51 20-19.01S35.05 4 24 4zm4.8 24.3h-9.6c-.66 0-1.2-.54-1.2-1.2 0-.66.54-1.2 1.2-1.2h6.9L18 16.5c-.32-.4-.24-.98.17-1.29.4-.31.98-.24 1.29.17l8.74 10.92c.3.38.2.93-.16 1.2-.33.25-.79.3-.94.3zm6.4-1.2c0 .66-.54 1.2-1.2 1.2h-3.2c-.66 0-1.2-.54-1.2-1.2V15.2c0-.66.54-1.2 1.2-1.2h3.2c.66 0 1.2.54 1.2 1.2v11.9z" />
-          </svg>
-
-          <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 text-[11px] font-bold">
-            Chat Zalo
-          </span>
-        </a>
-
-        {/* 4. Teaser Bubble (Thông báo mời chat phía trên nút Chatbot) */}
+        {/* 2. Teaser Bubble tinh gọn (Tự tắt sau 8s, nhẹ nhàng không rung giật) */}
         {!isOpen && showTeaser && (
-          <div className="bg-white rounded-2xl p-3 pr-7 border-2 border-charcoal-900 shadow-[3px_3px_0px_#18181B] max-w-[240px] text-xs animate-bounce relative mb-1">
+          <div className="bg-white rounded-2xl p-2.5 pr-7 border-2 border-charcoal-900 shadow-[3px_3px_0px_#18181B] max-w-[230px] text-xs relative mb-1 animate-fadeIn">
             <button
               onClick={() => setShowTeaser(false)}
               className="absolute top-1.5 right-1.5 text-stone-400 hover:text-charcoal-900 p-0.5"
@@ -254,40 +231,91 @@ export const ChatWidget = ({ onOpenTrialModal }) => {
             <div className="flex items-start gap-1.5">
               <span className="text-sm">👋</span>
               <p className="text-charcoal-800 font-medium text-[11px] leading-tight">
-                Cần tư vấn lớp vẽ cho <strong>bé</strong> hay <strong>người lớn</strong>? Nhắn Số Không nhé!
+                Cần tư vấn lớp vẽ <strong>bé</strong> hay <strong>người lớn</strong>? Nhắn Số Không nhé!
               </p>
             </div>
           </div>
         )}
 
-        {/* 5. NÚT CHATBOT CHÍNH (HERO ACTION BOTTOM-RIGHT) */}
-        <button
-          onClick={() => (isOpen ? setIsOpen(false) : handleOpen())}
-          className={`group relative flex items-center gap-2 p-3 rounded-full border-2 border-charcoal-900 shadow-[3px_3px_0px_#18181B] hover:shadow-[4px_4px_0px_#18181B] hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
-            isOpen ? 'bg-charcoal-900 text-amber-300' : 'bg-brand-400 hover:bg-brand-300 text-charcoal-900'
-          }`}
-          aria-label={isOpen ? 'Đóng cửa sổ chat' : 'Mở chatbot tư vấn'}
-          title="Tư vấn nghệ thuật Số Không"
-        >
-          {/* Online green indicator */}
+        {/* 3. Speed Dial Sub-actions (Chỉ bung ra khi bấm toggle để giữ màn hình gọn gàng) */}
+        {!isOpen && isSpeedDialOpen && (
+          <div className="flex flex-col items-end gap-2 mb-1 animate-fadeIn">
+            {/* Sub 1: Nút Học Thử 0đ */}
+            <button
+              onClick={() => {
+                setIsSpeedDialOpen(false);
+                onOpenTrialModal();
+              }}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-400 hover:bg-brand-300 text-charcoal-900 font-heading font-black text-xs rounded-full border-2 border-charcoal-900 shadow-[2px_2px_0px_#18181B] hover:shadow-[3px_3px_0px_#18181B] hover:-translate-y-0.5 transition-all"
+              title="Đăng ký suất học thử 0đ"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-charcoal-900 flex-shrink-0 animate-pulse" />
+              <span>Học thử 0đ</span>
+            </button>
+
+            {/* Sub 2: Nút Chat Zalo */}
+            <a
+              href="https://zalo.me/0988123456"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-[#0068FF] hover:bg-[#0054cc] text-white px-3.5 py-1.5 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all border border-blue-400 text-xs font-bold"
+              title="Nhắn tin Zalo 24/7"
+            >
+              <svg className="w-4 h-4 fill-white flex-shrink-0" viewBox="0 0 48 48">
+                <path d="M24 4C12.95 4 4 12.51 4 23.01c0 5.92 2.83 11.23 7.29 14.77l-1.87 6.94c-.21.78.53 1.46 1.25 1.15l7.73-3.32c1.78.47 3.66.73 5.6.73 11.05 0 20-8.51 20-19.01S35.05 4 24 4zm4.8 24.3h-9.6c-.66 0-1.2-.54-1.2-1.2 0-.66.54-1.2 1.2-1.2h6.9L18 16.5c-.32-.4-.24-.98.17-1.29.4-.31.98-.24 1.29.17l8.74 10.92c.3.38.2.93-.16 1.2-.33.25-.79.3-.94.3zm6.4-1.2c0 .66-.54 1.2-1.2 1.2h-3.2c-.66 0-1.2-.54-1.2-1.2V15.2c0-.66.54-1.2 1.2-1.2h3.2c.66 0 1.2.54 1.2 1.2v11.9z" />
+              </svg>
+              <span>Chat Zalo</span>
+            </a>
+          </div>
+        )}
+
+        {/* 4. CỤM NÚT CHÍNH (Nút Chatbot AI làm trung tâm + Nút toggle Speed Dial) */}
+        <div className="flex items-center gap-2">
+          {/* Nút toggle tiện ích Speed Dial (ẩn khi đang mở chat) */}
           {!isOpen && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
-            </span>
+            <button
+              onClick={() => setIsSpeedDialOpen(!isSpeedDialOpen)}
+              className={`w-9 h-9 rounded-full border-2 border-charcoal-900 flex items-center justify-center transition-all ${
+                isSpeedDialOpen 
+                  ? 'bg-charcoal-900 text-white rotate-45 shadow-[2px_2px_0px_#18181B]' 
+                  : 'bg-white hover:bg-stone-100 text-charcoal-800 shadow-[2px_2px_0px_#18181B] hover:-translate-y-0.5'
+              }`}
+              title={isSpeedDialOpen ? 'Đóng tiện ích' : 'Kênh hỗ trợ nhanh (Zalo, Học thử 0đ)'}
+              aria-label="Kênh hỗ trợ khác"
+            >
+              <span className="text-base font-black leading-none">{isSpeedDialOpen ? '×' : '+'}</span>
+            </button>
           )}
 
-          {isOpen ? (
-            <X className="w-6 h-6 text-amber-300" />
-          ) : (
-            <>
-              <BrandStamp className="w-6 h-6 flex-shrink-0" />
-              <span className="font-heading font-black text-xs tracking-tight pr-1 hidden sm:inline">
-                Tư Vấn AI
+          {/* NÚT CHATBOT CHÍNH */}
+          <button
+            onClick={() => (isOpen ? setIsOpen(false) : handleOpen())}
+            className={`group relative flex items-center gap-2 p-3 sm:px-4 sm:py-3 rounded-full border-2 border-charcoal-900 shadow-[3px_3px_0px_#18181B] hover:shadow-[4px_4px_0px_#18181B] hover:-translate-y-0.5 active:translate-y-0.5 transition-all ${
+              isOpen ? 'bg-charcoal-900 text-amber-300' : 'bg-brand-400 hover:bg-brand-300 text-charcoal-900'
+            }`}
+            aria-label={isOpen ? 'Đóng cửa sổ chat' : 'Mở chatbot tư vấn'}
+            title="Tư vấn nghệ thuật Số Không"
+          >
+            {/* Online green indicator */}
+            {!isOpen && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
               </span>
-            </>
-          )}
-        </button>
+            )}
+
+            {isOpen ? (
+              <X className="w-6 h-6 text-amber-300" />
+            ) : (
+              <>
+                <BrandStamp className="w-6 h-6 flex-shrink-0" />
+                <span className="font-heading font-black text-xs tracking-tight pr-1 hidden sm:inline">
+                  Tư Vấn AI
+                </span>
+              </>
+            )}
+          </button>
+        </div>
 
       </aside>
 
